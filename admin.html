@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Secrétariat | NDA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-6">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-black text-blue-900 mb-8 uppercase">Secrétariat NDA Démakpoè</h1>
+        
+        <div class="bg-white rounded-3xl shadow-xl overflow-hidden border mb-10">
+            <table class="w-full text-left">
+                <thead class="bg-gray-50 text-[10px] font-black uppercase">
+                    <tr><th class="p-4">Bénéficiaire & Intention</th><th class="p-4">Transaction & Agence</th><th class="p-4">Action</th></tr>
+                </thead>
+                <tbody id="adminTable" class="divide-y"></tbody>
+            </table>
+        </div>
+
+        <h2 class="text-xl font-bold mb-4 uppercase opacity-50">Membres Inscrits</h2>
+        <div id="listeMembres" class="grid grid-cols-2 md:grid-cols-6 gap-4"></div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        async function loadAdmin() {
+            const pass = prompt("Code Secret :"); if(pass !== "1234") return window.location.href="index.html";
+            const { data: m } = await _supabase.from('demandes_messes').select('*').order('created_at', {ascending: false});
+            document.getElementById('adminTable').innerHTML = m.map(d => `
+                <tr>
+                   
+<td class="p-4 max-w-[200px]"> 
+    <div class="font-bold text-sm truncate">${d.nom_beneficiaire}</div>
+    <div class="text-[10px] text-gray-400 italic break-all leading-tight">
+        ${d.details_intention || 'Sans détails'}
+    </div>
+</td>
+                    <td class="p-4"><span class="text-blue-600 font-mono text-xs">${d.transaction_id}</span><br><small class="font-bold text-red-500 uppercase">${d.info_expediteur}</small></td>
+                    <td class="p-4">${d.statut_paiement !== 'confirme' ? `<button onclick="valider('${d.id}')" class="bg-blue-900 text-white px-4 py-1 rounded text-[10px]">VALIDER</button>` : '✅'}</td>
+                </tr>
+            `).join('');
+
+            const { data: p } = await _supabase.from('profiles').select('username');
+            document.getElementById('listeMembres').innerHTML = p.map(u => `<div class="bg-white p-3 rounded-xl shadow-sm text-center text-xs font-bold">👤 ${u.username}</div>`).join('');
+        }
+        async function valider(id) { await _supabase.from('demandes_messes').update({ statut_paiement: 'confirme' }).eq('id', id); location.reload(); }
+        loadAdmin();
+    </script>
+</body>
+</html>
