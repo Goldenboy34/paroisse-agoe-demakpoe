@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Espace Fidèle | NDA Démakpoè</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -12,8 +13,8 @@
 
     <nav class="bg-[#23318E] text-white p-4 shadow-lg flex justify-between items-center px-8 sticky top-0 z-50">
         <div class="flex items-center gap-3">
-            <img src="logo-paroisse.jpeg.jpeg" class="h-10 w-10 rounded-full border border-white object-cover">
-            <span class="font-bold uppercase text-xs md:text-sm">NDA DÉMAKPOÈ</span>
+            <img src="logo-paroisse.jpeg.jpeg" class="h-10 w-10 rounded-full border border-white object-cover" onerror="this.src='https://via.placeholder.com/150'">
+            <span class="font-bold uppercase text-xs">NDA DÉMAKPOÈ</span>
         </div>
         <div class="flex items-center gap-4">
             <span id="displayUsername" class="text-[10px] font-black bg-white/20 px-3 py-1 rounded-full uppercase">...</span>
@@ -55,16 +56,16 @@
         <!-- Mur de prière -->
         <div class="bg-white rounded-3xl shadow-2xl p-8 mb-12 border border-orange-100">
             <h2 class="text-2xl font-black text-orange-600 mb-6 flex items-center gap-2">🕯️ Mur de Prière</h2>
-            <div class="flex gap-4 mb-8">
-                <input id="nouvellePriere" placeholder="Votre intention..." class="flex-1 p-4 bg-orange-50 rounded-2xl outline-none">
-                <button onclick="posterPriere()" class="bg-orange-500 text-white px-8 py-4 rounded-2xl font-bold">POSTER</button>
+            <div class="flex flex-col md:flex-row gap-4 mb-8">
+                <input id="nouvellePriere" placeholder="Votre intention..." class="flex-1 p-4 bg-orange-50 rounded-2xl outline-none border border-orange-100 focus:border-orange-500 transition">
+                <button onclick="posterPriere()" class="bg-orange-500 text-white px-8 py-4 rounded-2xl font-bold hover:bg-orange-600 transition">POSTER</button>
             </div>
             <div id="listePrieres" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
         <!-- Historique -->
         <div id="historiqueSection" class="bg-white rounded-3xl shadow-2xl p-8">
-            <h2 class="text-2xl font-black text-[#23318E] mb-6 uppercase tracking-tighter">Mes demandes récentes</h2>
+            <h2 class="text-2xl font-black text-[#23318E] mb-6 uppercase tracking-tighter border-b pb-4">Mes demandes récentes</h2>
             <div id="historique" class="text-center py-10 text-gray-400 italic">Chargement de votre historique...</div>
         </div>
     </div>
@@ -78,7 +79,7 @@
             </div>
             <form id="formMesse" class="space-y-4">
                 <input id="nomBeneficiaire" placeholder="Nom complet du bénéficiaire" class="w-full p-4 bg-gray-50 border rounded-2xl outline-none" required>
-                <textarea id="detailsIntention" placeholder="Détails de l'intention (Repos de l'âme de..., Action de grâce pour..., etc.)" class="w-full p-4 bg-gray-50 border rounded-2xl outline-none h-24" required></textarea>
+                <textarea id="detailsIntention" placeholder="Détails de l'intention..." class="w-full p-4 bg-gray-50 border rounded-2xl outline-none h-24" required></textarea>
                 <div class="grid grid-cols-2 gap-4">
                     <select id="typePriere" class="p-4 bg-gray-50 border rounded-2xl outline-none">
                         <option value="unique">Messe Unique</option>
@@ -88,12 +89,12 @@
                     <input type="date" id="dateDebut" class="p-4 bg-gray-50 border rounded-2xl outline-none" required>
                 </div>
                 <div class="bg-red-50 p-6 rounded-3xl border-2 border-dashed border-red-200">
-                    <p class="text-[10px] text-red-800 font-black mb-3 uppercase tracking-widest text-center">Transfert au +228 XX XX XX XX</p>
+                    <p class="text-[10px] text-red-800 font-black mb-3 uppercase tracking-widest text-center">Transfert au +228 00 00 00 00</p>
                     <input id="transactionId" placeholder="ID Transaction (Référence)" class="w-full p-3 border rounded-xl mb-2 outline-none" required>
-                    <input id="infoExpediteur" placeholder="N° téléphone d'envoi ou Agence" class="w-full p-3 border rounded-xl mb-2 outline-none" required>
+                    <input id="infoExpediteur" placeholder="N° téléphone d'envoi" class="w-full p-3 border rounded-xl mb-2 outline-none" required>
                     <input id="montant" type="number" placeholder="Montant (FCFA)" class="w-full p-3 border rounded-xl outline-none font-bold" required>
                 </div>
-                <button type="submit" class="w-full bg-[#23318E] text-white py-4 rounded-2xl font-black shadow-lg uppercase tracking-widest">Confirmer l'envoi</button>
+                <button type="submit" class="w-full bg-[#23318E] text-white py-4 rounded-2xl font-black shadow-lg uppercase tracking-widest hover:bg-[#E30613] transition">Confirmer l'envoi</button>
             </form>
         </div>
     </div>

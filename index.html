@@ -2,27 +2,35 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Paroisse Notre Dame de l'Assomption</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paroisse Notre Dame de l'Assomption | NDA Démakpoè</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-white font-['Inter']">
     <nav class="flex justify-between items-center p-6 bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
         <div class="flex items-center gap-3">
-            <img.src="logo-paroisse.jpeg.jpeg"class="h-12 w-12 rounded-full border-2 border-[#23318E]">
+            <img src="logo-paroisse.jpeg.jpeg" class="h-12 w-12 rounded-full border-2 border-[#23318E] object-cover" onerror="this.src='https://via.placeholder.com/150'">
             <span class="font-bold text-[#23318E] tracking-tight">NDA DÉMAKPOÈ</span>
         </div>
         <a href="auth.html" class="bg-[#23318E] text-white px-6 py-2 rounded-full font-bold hover:bg-[#E30613] transition">Connexion</a>
     </nav>
 
-    <header class="h-[80vh] flex items-center justify-center text-center bg-slate-900 text-white relative overflow-hidden">
-        <div class="z-10 px-4">
+    <header class="min-h-[80vh] flex items-center justify-center text-center bg-slate-900 text-white relative overflow-hidden px-4">
+        <div class="z-10 max-w-4xl">
             <h1 class="text-5xl md:text-7xl font-['Playfair_Display'] mb-6">La Foi qui agit par la Charité</h1>
             <p class="text-xl mb-10 text-slate-300">Bienvenue sur la plateforme digitale de la Paroisse d'Agoè Démakpoè</p>
-            <a href="auth.html" class="bg-[#E30613] text-white px-10 py-4 rounded-full font-black text-lg shadow-2xl hover:scale-105 transition block md:inline-block">REJOINDRE LA COMMUNAUTÉ</a>
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <a href="auth.html" class="bg-[#E30613] text-white px-10 py-4 rounded-full font-black text-lg shadow-2xl hover:scale-105 transition">REJOINDRE LA COMMUNAUTÉ</a>
+                <a href="#apropos" class="bg-white/10 backdrop-blur-md text-white border border-white/20 px-10 py-4 rounded-full font-bold text-lg hover:bg-white/20 transition">DÉCOUVRIR</a>
+            </div>
         </div>
-        <img.src="bg.jpg"></img.src>
+        <!-- Image de fond avec overlay sombre -->
+        <img src="bg.jpg" class="absolute inset-0 w-full h-full object-cover opacity-40" onerror="this.src='https://images.unsplash.com/photo-1548625149-fc4a29cf7092?auto=format&fit=crop&q=80'">
     </header>
+
+    <footer class="bg-gray-50 py-10 text-center border-t">
+        <p class="text-gray-500 text-sm">© 2024 Paroisse Notre Dame de l'Assomption - Agoè Démakpoè</p>
+    </footer>
 </body>
 </html>
