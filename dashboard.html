@@ -3,100 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Espace | NDA</title>
+    <title>Mon Espace | Notre Dame de l'Assomption</title>
+    <!-- Bibliothèques nécessaires -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+    </style>
 </head>
-<body class="bg-gray-50 font-['Inter'] pb-20">
+<body class="bg-slate-50 min-h-screen pb-12">
 
-    <nav class="bg-[#23318E] text-white p-4 shadow-lg flex justify-between items-center px-6 md:px-12 sticky top-0 z-50">
+    <!-- BARRE DE NAVIGATION -->
+    <nav class="bg-[#23318E] text-white p-4 flex justify-between items-center px-6 md:px-12 sticky top-0 z-50 shadow-xl">
         <div class="flex items-center gap-3">
-            <img src="logo-paroisse.jpeg" class="h-10 w-10 rounded-full border border-white object-cover">
-            <span class="font-bold uppercase text-[10px] md:text-xs">NDA DÉMAKPOÈ</span>
+            <img src="logo-paroisse.jpeg.jpeg" class="h-10 w-10 rounded-full border-2 border-white object-cover shadow-lg">
+            <div class="hidden md:block">
+                <span class="font-black text-xs tracking-widest block uppercase">Paroisse Notre Dame de l'Assomption</span>
+                <span class="text-[8px] opacity-60 uppercase">Agoè-Démakpoè, Lomé</span>
+            </div>
         </div>
-        <div class="flex items-center gap-3">
-            <span id="displayUsername" class="hidden md:block text-[10px] font-black bg-white/20 px-3 py-1 rounded-full uppercase italic">...</span>
-            <button id="logoutBtn" class="bg-red-600 px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-red-700 transition">SORTIR</button>
+        <div class="flex items-center gap-4">
+            <div class="text-right">
+                <span id="displayUsername" class="text-[10px] font-black uppercase bg-white/20 px-4 py-1.5 rounded-full border border-white/10 tracking-widest">Chargement...</span>
+            </div>
+            <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-xl text-[10px] font-black transition-transform active:scale-95 shadow-lg">SORTIR</button>
         </div>
     </nav>
 
-    <div class="max-w-4xl mx-auto py-8 px-4">
-        <h1 id="welcomeTitle" class="text-2xl font-black text-gray-800 mb-6 tracking-tight">Bienvenue</h1>
+    <div class="max-w-4xl mx-auto p-6 mt-4">
+        
+        <!-- 1. SECTION BIENVENUE -->
+        <header class="mb-10">
+            <h1 id="welcomeTitle" class="text-4xl md:text-5xl font-black text-slate-800 tracking-tighter italic">
+                Bienvenue...
+            </h1>
+            <p class="text-slate-400 text-sm mt-2 font-medium uppercase tracking-widest">Heureux de vous revoir dans la paix du Christ</p>
+        </header>
 
-        <!-- Parole du jour -->
-        <div class="mb-8 bg-gradient-to-br from-[#23318E] to-blue-800 text-white p-6 rounded-[2rem] shadow-xl relative overflow-hidden">
+        <!-- 2. SECTION MÉDITATION (Verset chargé par l'admin) -->
+        <div id="cardMeditation" class="bg-white p-8 rounded-[2.5rem] shadow-2xl border-l-[15px] border-[#23318E] mb-12 relative overflow-hidden group transition-all hover:shadow-blue-100">
             <div class="relative z-10">
-                <p class="text-[9px] font-black uppercase opacity-60 mb-1 tracking-widest">Liturgie du jour</p>
-                <h3 id="titreJour" class="text-lg font-bold mb-2">Chargement de la Parole...</h3>
-                <div id="texteLecture" class="text-sm opacity-90 leading-relaxed italic max-h-32 overflow-y-auto pr-2">Veuillez patienter...</div>
+                <h3 class="text-[10px] font-black uppercase text-[#23318E] mb-3 tracking-[0.3em] opacity-60">Méditation du jour</h3>
+                <p id="versetJour" class="text-xl md:text-2xl font-bold text-slate-800 italic leading-snug">
+                    "Le Seigneur est ma lumière et mon salut, de qui aurais-je crainte ?"
+                </p>
+                <p id="versetReference" class="mt-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Chargement de la Parole...</p>
             </div>
-            <span class="absolute -right-6 -bottom-6 text-7xl opacity-10 rotate-12">📖</span>
+            <!-- Décoration en fond -->
+            <span class="absolute -right-10 -bottom-10 text-[10rem] opacity-[0.03] select-none pointer-events-none group-hover:rotate-12 transition-transform">🕯️</span>
         </div>
 
-        <!-- Menu Rapide -->
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
-            <button onclick="ouvrirModal()" class="bg-white p-6 rounded-3xl shadow-md border hover:shadow-xl transition flex flex-col items-center">
-                <span class="text-3xl mb-2">🙏</span>
-                <span class="font-bold text-sm">Demander Messe</span>
+        <!-- 3. GRILLE DES 3 ACTIONS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+            <!-- Action 1 : Messe -->
+            <button onclick="ouvrirModal()" class="group bg-[#23318E] text-white p-8 rounded-[2.5rem] shadow-2xl hover:bg-[#E30613] hover:-translate-y-2 transition-all duration-300 flex flex-col items-center">
+                <div class="bg-white/20 p-4 rounded-3xl mb-4 group-hover:scale-110 transition-transform">
+                    <span class="text-4xl">🙏</span>
+                </div>
+                <span class="font-black uppercase text-[11px] tracking-[0.2em]">Demander une Messe</span>
             </button>
-            <button onclick="document.getElementById('historiqueSection').scrollIntoView({behavior:'smooth'})" class="bg-white p-6 rounded-3xl shadow-md border hover:shadow-xl transition flex flex-col items-center">
-                <span class="text-3xl mb-2">📄</span>
-                <span class="font-bold text-sm">Mes Reçus</span>
+
+            <!-- Action 2 : Reçus -->
+            <button onclick="document.getElementById('historiqueSection').scrollIntoView({behavior:'smooth'})" class="group bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100 hover:border-blue-200 hover:-translate-y-2 transition-all duration-300 flex flex-col items-center">
+                <div class="bg-blue-50 p-4 rounded-3xl mb-4 group-hover:scale-110 transition-transform">
+                    <span class="text-4xl">📄</span>
+                </div>
+                <span class="font-black uppercase text-[11px] tracking-[0.2em] text-slate-600">Mes Reçus PDF</span>
             </button>
-            <a href="admin.html" class="bg-gray-100 p-6 rounded-3xl shadow-md border hover:shadow-xl transition flex flex-col items-center border-dashed">
-                <span class="text-3xl mb-2">🏢</span>
-                <span class="font-bold text-sm">Secrétariat</span>
-            </a>
+
+            <!-- Action 3 : Lectures (Ouvre la page dédiée) -->
+            <button onclick="window.location.href='lectures.html'" class="group bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100 hover:border-blue-200 hover:-translate-y-2 transition-all duration-300 flex flex-col items-center">
+                <div class="bg-orange-50 p-4 rounded-3xl mb-4 group-hover:scale-110 transition-transform">
+                    <span class="text-4xl">📖</span>
+                </div>
+                <span class="font-black uppercase text-[11px] tracking-[0.2em] text-slate-600">Lire la Parole</span>
+            </button>
         </div>
 
-        <!-- Mur de prière -->
-        <div class="bg-white rounded-3xl shadow-lg p-6 mb-10 border-t-4 border-orange-400">
-            <h2 class="text-xl font-black text-orange-600 mb-4 flex items-center gap-2">🕯️ Mur de Prière Communautaire</h2>
-            <div class="flex gap-2 mb-6">
-                <input id="nouvellePriere" placeholder="Écrivez votre intention ici..." class="flex-1 p-3 bg-gray-50 rounded-xl outline-none border focus:border-orange-400">
-                <button onclick="posterPriere()" class="bg-orange-500 text-white px-5 py-3 rounded-xl font-bold hover:bg-orange-600 transition text-sm uppercase">Poster</button>
+        <!-- 4. SECTION HISTORIQUE & SUIVI -->
+        <div id="historiqueSection" class="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-slate-100">
+            <div class="bg-slate-50/50 p-8 border-b flex justify-between items-center">
+                <div>
+                    <h2 class="text-sm font-black text-slate-800 uppercase tracking-widest">Suivi de mes demandes</h2>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">Vérifiez l'état de validation de vos intentions</p>
+                </div>
+                <div class="h-10 w-10 bg-white rounded-full flex items-center justify-center shadow-sm">🕒</div>
             </div>
-            <div id="listePrieres" class="grid gap-3"></div>
+            
+            <!-- Contenu dynamique de l'historique -->
+            <div id="historiqueContent" class="divide-y divide-slate-50">
+                <div class="text-center py-20">
+                    <div class="animate-spin h-8 w-8 border-4 border-blue-900 border-t-transparent rounded-full mx-auto mb-4"></div>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Chargement de vos données...</p>
+                </div>
+            </div>
         </div>
 
-        <!-- Historique -->
-        <div id="historiqueSection" class="bg-white rounded-3xl shadow-lg p-6 border">
-            <h2 class="text-xl font-black text-[#23318E] mb-4 uppercase tracking-tighter">Mes Demandes de Messes</h2>
-            <div id="historique" class="text-center py-6 text-gray-400 italic">Chargement...</div>
-        </div>
     </div>
 
-    <!-- MODAL MESSE -->
-    <div id="modalMesse" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-[100] px-4">
-        <div class="bg-white w-full max-w-lg rounded-[2.5rem] p-6 md:p-8 overflow-y-auto max-h-[95vh] shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-black text-[#23318E] uppercase">Nouvelle Demande</h2>
-                <button onclick="fermerModal()" class="text-gray-400 hover:text-red-500 text-2xl">✕</button>
+    <!-- MODAL : FORMULAIRE DE DEMANDE DE MESSE -->
+    <div id="modalMesse" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md hidden flex items-center justify-center z-[100] p-4">
+        <div class="bg-white w-full max-w-lg rounded-[3rem] p-8 shadow-2xl max-h-[95vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="text-2xl font-black text-[#23318E] uppercase tracking-tighter">Nouvelle Intention</h2>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Remplissez le formulaire ci-dessous</p>
+                </div>
+                <button onclick="fermerModal()" class="h-12 w-12 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all text-2xl font-bold">✕</button>
             </div>
-            <form id="formMesse" class="space-y-4">
-                <input id="nomBeneficiaire" placeholder="Nom complet du bénéficiaire" class="w-full p-4 bg-gray-50 border rounded-2xl outline-none" required>
-                <textarea id="detailsIntention" placeholder="Détails de l'intention (Ex: Action de grâce, repos de l'âme de...)" class="w-full p-4 bg-gray-50 border rounded-2xl outline-none h-24" required></textarea>
-                <div class="grid grid-cols-2 gap-4">
-                    <select id="typePriere" class="p-4 bg-gray-50 border rounded-2xl outline-none text-sm">
-                        <option value="unique">Messe Unique</option>
-                        <option value="triduum">Triduum (3 jrs)</option>
-                        <option value="neuvaine">Neuvaine (9 jrs)</option>
-                    </select>
-                    <input type="date" id="dateDebut" class="p-4 bg-gray-50 border rounded-2xl outline-none text-sm" required>
+
+            <form id="formMesse" class="space-y-5">
+                <div>
+                    <label class="text-[10px] font-black uppercase text-slate-400 ml-4 mb-2 block">Bénéficiaire</label>
+                    <input id="nomBeneficiaire" placeholder="Ex: Famille KODJO / Défunt KPODAR" class="w-full p-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-900 transition" required>
                 </div>
-                <div class="bg-blue-50 p-5 rounded-2xl border-2 border-dashed border-blue-200">
-                    <p class="text-[10px] text-blue-900 font-black mb-3 uppercase text-center tracking-widest">Paiement : Transfert au +228 XX XX XX XX</p>
-                    <input id="transactionId" placeholder="ID de Transaction" class="w-full p-3 border rounded-xl mb-2 text-sm outline-none" required>
-                    <input id="infoExpediteur" placeholder="N° de téléphone d'envoi" class="w-full p-3 border rounded-xl mb-2 text-sm outline-none" required>
-                    <input id="montant" type="number" placeholder="Montant (FCFA)" class="w-full p-3 border rounded-xl font-bold outline-none" required>
+
+                <div>
+                    <label class="text-[10px] font-black uppercase text-slate-400 ml-4 mb-2 block">Détails de l'intention</label>
+                    <textarea id="detailsIntention" placeholder="Action de grâce, repos de l'âme, santé..." class="w-full p-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-900 transition h-28" required></textarea>
                 </div>
-                <button type="submit" class="w-full bg-[#23318E] text-white py-4 rounded-2xl font-black uppercase shadow-lg hover:bg-green-600 transition tracking-widest">Envoyer la demande</button>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-black uppercase text-slate-400 ml-4 mb-2 block">Type de Prière</label>
+                        <select id="typePriere" class="w-full p-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-900 transition">
+                            <option value="messe_unique">Messe Unique</option>
+                            <option value="neuvaine">Neuvaine (9 jrs)</option>
+                            <option value="triduum">Triduum (3 jrs)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black uppercase text-slate-400 ml-4 mb-2 block">Date de début</label>
+                        <input type="date" id="dateDebut" class="w-full p-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-900 transition" required>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-6 rounded-[2rem] border-2 border-dashed border-blue-100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="h-8 w-8 bg-blue-900 text-white rounded-full flex items-center justify-center text-xs font-bold">!</div>
+                        <p class="text-[10px] text-blue-900 font-black uppercase tracking-widest">Paiement via Flooz ou T-Money au +228 00 00 00 00</p>
+                    </div>
+                    <div class="space-y-3">
+                        <input id="transactionId" placeholder="ID de Transaction (Référence)" class="w-full p-3 bg-white border-none rounded-xl text-sm outline-none shadow-sm" required>
+                        <input id="montant" type="number" placeholder="Montant versé (FCFA)" class="w-full p-3 bg-white border-none rounded-xl text-sm outline-none shadow-sm font-bold" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-[#23318E] text-white py-5 rounded-2xl font-black shadow-2xl hover:bg-[#E30613] hover:-translate-y-1 transition-all uppercase tracking-[0.2em]">Envoyer ma demande</button>
             </form>
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="script.js"></script>
     <script>
         function ouvrirModal() { document.getElementById('modalMesse').classList.remove('hidden'); }
