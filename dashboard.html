@@ -13,8 +13,14 @@
     <img src="gr.jpg" class="marie-bg" alt="Fond">
 
     <!-- SIDEBAR -->
-    <aside class="w-64 bg-slate-900 text-white flex flex-col fixed h-full z-[100] rounded-r-[2.5rem] shadow-2xl">
+    <!-- SIDEBAR RESPONSIVE -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-[150] w-64 bg-slate-900 text-white transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 lg:flex lg:flex-col rounded-r-[2.5rem] lg:rounded-none shadow-2xl">
         <div class="p-8">
+            <!-- Bouton fermer (Mobile uniquement) -->
+            <button onclick="toggleSidebar()" class="lg:hidden absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-2xl"></i>
+            </button>
+            
             <img src="logo-paroisse.jpeg.jpeg" class="h-16 w-16 rounded-full border-2 border-gold mx-auto mb-4 object-cover">
             <h1 class="text-center font-black text-[10px] tracking-widest uppercase text-white">NDA DÉMAKPOÈ</h1>
         </div>
@@ -40,88 +46,66 @@
         </div>
     </aside>
 
+    <!-- OVERLAY (pour fermer la sidebar en cliquant à côté sur mobile) -->
+    <div id="overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-[140] hidden lg:hidden"></div>
+
     <!-- MAIN CONTENT -->
-    <main class="flex-1 ml-64 p-10 relative z-10 min-h-screen">
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 w-full lg:ml-0 p-4 md:p-10 relative z-10 min-h-screen">
         
-        <!-- TOP BAR (Bienvenue & Profil) -->
-        <header class="flex justify-between items-center mb-12">
-            <div class="relative w-96">
+        <!-- TOP BAR (Menu Burger ajouté ici) -->
+        <header class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+            <div class="flex items-center justify-between w-full lg:w-auto">
+                <!-- Bouton Menu Burger (Mobile) -->
+                <button onclick="toggleSidebar()" class="lg:hidden text-slate-900 bg-white p-3 rounded-xl shadow-md">
+                    <i class="fa-solid fa-bars-staggered text-xl"></i>
+                </button>
+                
+                <!-- Titre Mobile -->
+                <h2 class="lg:hidden font-serif italic text-xl text-slate-900">Dashboard</h2>
+                
+                <!-- Photo Profil Mobile -->
+                <div class="lg:hidden relative h-10 w-10 bg-slate-900 rounded-full flex items-center justify-center text-white border border-gold/30">
+                    <img id="userPhotoMobile" class="h-full w-full rounded-full object-cover hidden">
+                    <i id="userIconMobile" class="fa-solid fa-user text-xs"></i>
+                </div>
+            </div>
+
+            <!-- Barre de recherche (Pleine largeur sur mobile) -->
+            <div class="relative w-full md:w-96">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" placeholder="Rechercher une annonce..." class="w-full bg-[#F5F1E8]/80 backdrop-blur-md border border-slate-200 rounded-2xl py-3 pl-12 text-xs focus:ring-2 focus:ring-gold transition-all">
+                <input type="text" placeholder="Rechercher..." class="w-full bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl py-3 pl-12 text-xs focus:ring-2 focus:ring-gold transition-all shadow-sm">
             </div>
             
-            <div class="flex items-center gap-4">
+            <!-- Profil (Desktop uniquement) -->
+            <div class="hidden lg:flex items-center gap-4">
                 <div class="text-right">
-                    <p class="text-[10px] text-gold font-bold uppercase tracking-widest">Bienvenue,</p>
-                    <p id="userNameText" class="text-sm font-black text-slate-900 leading-none">Chargement...</p>
+                    <p class="text-[10px] text-gold font-bold uppercase tracking-widest leading-none mb-1">Bienvenue,</p>
+                    <p id="userNameText" class="text-sm font-black text-slate-900 leading-none italic">Chargement...</p>
                 </div>
-                <!-- Zone Photo de Profil Clickable -->
                 <div class="relative group cursor-pointer" onclick="document.getElementById('profileUpload').click()">
                     <div id="userPhotoContainer" class="h-12 w-12 bg-slate-900 rounded-full flex items-center justify-center text-white shadow-lg overflow-hidden border-2 border-gold/30">
                         <i id="userIcon" class="fa-solid fa-user"></i>
                         <img id="userPhoto" class="hidden h-full w-full object-cover">
-                    </div>
-                    <div class="absolute -bottom-1 -right-1 bg-gold text-white text-[8px] p-1 rounded-full shadow-md">
-                        <i class="fa-solid fa-camera"></i>
                     </div>
                     <input type="file" id="profileUpload" class="hidden" accept="image/*">
                 </div>
             </div>
         </header>
 
-        <!-- ACTIONS RAPIDES -->
-        <h2 class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-6">Actions Rapides</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            
-            <div onclick="openModal('modalMesse')" class="glass-card-dark p-8 group cursor-pointer hover:scale-105 transition-all duration-500 shadow-xl border-t-4 border-gold">
-                <div class="flex justify-between items-start mb-8">
-                    <div class="h-12 w-12 bg-gold/20 rounded-2xl flex items-center justify-center text-xl text-gold"><i class="fa-solid fa-cross"></i></div>
-                    <i class="fa-solid fa-ellipsis-vertical text-slate-500"></i>
-                </div>
-                <p class="font-black text-sm uppercase tracking-widest text-white">Demande de Messe</p>
-                <p class="text-[10px] text-slate-400 mt-1 italic">Envoyez vos intentions de prière</p>
-            </div>
-
-            <div onclick="openModal('modalDon')" class="glass-card p-8 bg-[#F5F1E8]/80 group cursor-pointer hover:border-gold transition-all duration-500 shadow-sm border-t-4 border-slate-200">
-                <div class="flex justify-between items-start mb-8">
-                    <div class="h-12 w-12 bg-gold/10 rounded-2xl flex items-center justify-center text-xl text-gold"><i class="fa-solid fa-hand-holding-heart"></i></div>
-                    <i class="fa-solid fa-ellipsis-vertical text-slate-300"></i>
-                </div>
-                <p class="font-black text-sm uppercase tracking-widest text-slate-900">Dîmes & Offrandes</p>
-                <p class="text-[10px] text-gold font-bold mt-1 italic">Soutenez la paroisse</p>
-            </div>
-
-            <div onclick="openModal('modalVie')" class="glass-card p-8 bg-[#F5F1E8]/80 group cursor-pointer hover:border-slate-900 transition-all duration-500 shadow-sm border-t-4 border-slate-200">
-                <div class="flex justify-between items-start mb-8">
-                    <div class="h-12 w-12 bg-slate-100 rounded-2xl flex items-center justify-center text-xl text-slate-900"><i class="fa-solid fa-calendar-check"></i></div>
-                    <i class="fa-solid fa-ellipsis-vertical text-slate-300"></i>
-                </div>
-                <p class="font-black text-sm uppercase tracking-widest text-slate-900">Vie Paroissiale</p>
-                <p class="text-[10px] text-slate-400 mt-1 italic">Mouvements & Responsables</p>
-            </div>
+        <!-- Grille d'actions (Déjà responsive normalement) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12">
+            <!-- Tes cartes ici ... -->
         </div>
 
-        <!-- HISTORIQUE -->
-        <div class="bg-[#F5F1E8]/90 backdrop-blur-md rounded-[2.5rem] p-8 shadow-sm border border-white/50">
-            <div class="flex justify-between items-center mb-8">
-                <h3 class="font-black text-[10px] uppercase tracking-widest text-slate-900">Historique des Intentions</h3>
-                <button class="text-[9px] font-bold text-gold uppercase border-b border-gold">Voir tout</button>
+        <!-- Tableau (Ajout du scroll horizontal pour mobile) -->
+        <div class="bg-[#F5F1E8]/90 backdrop-blur-md rounded-[2rem] p-4 md:p-8 shadow-sm border border-white/50">
+            <h3 class="font-black text-[10px] uppercase tracking-widest text-slate-900 mb-6">Historique</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left min-w-[500px]">
+                    <!-- Tes en-têtes et body ... -->
+                </table>
             </div>
-            
-            <table class="w-full text-left">
-                <thead>
-                    <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
-                        <th class="pb-4">Bénéficiaire</th>
-                        <th class="pb-4">Type</th>
-                        <th class="pb-4">Date</th>
-                        <th class="pb-4">Statut</th>
-                        <th class="pb-4 text-right">Reçu</th>
-                    </tr>
-                </thead>
-                <tbody id="historiqueMesseTable" class="text-xs">
-                    <!-- JS chargera les lignes ici -->
-                </tbody>
-            </table>
         </div>
     </main>
 

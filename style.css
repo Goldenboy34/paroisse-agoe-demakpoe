@@ -310,3 +310,13 @@ aside {
     background: rgba(255, 255, 255, 0.9) !important;
     box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15);
 }
+@media (max-width: 768px) {
+    .marie-bg {
+        width: 100%; /* Prend toute la largeur */
+        opacity: 0.1; /* Encore plus discret sur mobile */
+    }
+    
+    main {
+        padding-top: 20px;
+    }
+}
