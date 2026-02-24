@@ -3,157 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secrétariat NDA | Admin</title>
+    <title>Secrétariat Pro | NDA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-gray-100 min-h-screen p-4 md:p-8">
-    <div class="max-w-6xl mx-auto">
-        <div class="flex justify-between items-center mb-8 bg-white p-6 rounded-[2rem] shadow-sm">
-            <h1 class="text-2xl font-black text-blue-900 uppercase">Secrétariat NDA</h1>
-            <a href="dashboard.html" class="bg-gray-800 text-white px-4 py-2 rounded-xl text-xs font-bold">RETOUR</a>
-        </div>
-        
-        <div class="bg-white rounded-[2rem] shadow-xl overflow-hidden border">
-            <div class="p-6 bg-gray-50 border-b">
-                <h2 class="font-black text-xs uppercase text-gray-500 tracking-widest">Demandes de messes à valider</h2>
+<body class="bg-slate-100 min-h-screen pb-20">
+
+    <nav class="bg-[#23318E] text-white p-6 shadow-xl sticky top-0 z-50 flex justify-between items-center">
+        <h1 class="font-black uppercase tracking-tighter text-xl">Secrétariat Numérique NDA</h1>
+        <a href="dashboard.html" class="bg-white/10 px-4 py-2 rounded-lg text-xs font-bold hover:bg-white/20 transition">RETOUR DASHBOARD</a>
+    </nav>
+
+    <div class="max-w-6xl mx-auto p-4 md:p-8 space-y-10">
+
+        <!-- SECTION 1 : VALIDATION DES MESSES -->
+        <div class="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border">
+            <div class="p-8 bg-white border-b flex justify-between items-center">
+                <h2 class="text-xl font-black text-blue-900 uppercase italic">Intentions de Messes</h2>
+                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-[10px] font-black uppercase">Vérification Paiements</span>
             </div>
-            <table class="w-full text-left">
-                <thead class="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
-                    <tr>
-                        <th class="p-4">Bénéficiaire & Intention</th>
-                        <th class="p-4">Transaction</th>
-                        <th class="p-4">Montant</th>
-                        <th class="p-4">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="adminTable" class="divide-y text-sm">
-                    <tr><td colspan="4" class="p-10 text-center">Chargement des données...</td></tr>
-                </tbody>
-            </table>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
+                        <tr>
+                            <th class="p-6">Bénéficiaire & Intention</th>
+                            <th class="p-6">Référence Transaction</th>
+                            <th class="p-6">Montant</th>
+                            <th class="p-6 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTable" class="divide-y text-sm">
+                        <tr><td colspan="4" class="p-10 text-center text-gray-400 italic">Chargement des demandes...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SECTION 2 : SURVEILLANCE DES MEMBRES -->
+        <div class="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border">
+            <div class="p-8 bg-[#23318E] text-white flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-black uppercase tracking-widest">Surveillance des Membres</h2>
+                    <p class="text-[10px] opacity-60 font-bold uppercase mt-1 italic">Flux en temps réel</p>
+                </div>
+                <div class="bg-green-500 px-4 py-1 rounded-full text-[10px] font-black animate-pulse shadow-lg">LIVE</div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
+                        <tr>
+                            <th class="p-6">Utilisateur</th>
+                            <th class="p-6">Dernière activité</th>
+                            <th class="p-6">Statut</th>
+                            <th class="p-6 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userMonitoringTable" class="divide-y text-sm">
+                        <tr><td colspan="4" class="p-10 text-center text-gray-400 italic">Initialisation du radar...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script src="script.js"></script>
     <script>
-        async function loadAdmin() {
-            const pass = prompt("Code Secret Secrétariat :"); 
-            if(pass !== "1234") return window.location.href="dashboard.html";
-            
-            const { data: m } = await _supabase.from('demandes_messes').select('*').order('created_at', {ascending: false});
-            const table = document.getElementById('adminTable');
-            
-            if(!m || m.length === 0) {
-                table.innerHTML = "<tr><td colspan='4' class='p-10 text-center'>Aucune demande.</td></tr>";
+        // --- SÉCURITÉ ADMIN ---
+        async function loadAdminAccess() {
+            const pass = prompt("Code d'accès Secrétariat :");
+            if(pass !== "1234") {
+                alert("Accès refusé");
+                window.location.href = "dashboard.html";
                 return;
             }
+            fetchMesses();
+            monitorUsers();
+        }
+
+        // --- GESTION DES MESSES ---
+        async function fetchMesses() {
+            const { data: m } = await _supabase.from('demandes_messes').select('*').order('created_at', {ascending: false});
+            const table = document.getElementById('adminTable');
+            if(!m || m.length === 0) { table.innerHTML = "<tr><td colspan='4' class='p-10 text-center text-gray-400'>Aucune demande reçue.</td></tr>"; return; }
 
             table.innerHTML = m.map(d => `
                 <tr class="hover:bg-gray-50 transition">
-                    <td class="p-4"> 
-                        <div class="font-bold text-gray-800 uppercase text-xs">${d.nom_beneficiaire}</div>
-                        <div class="text-[10px] text-gray-400 italic">${d.details_intention}</div>
+                    <td class="p-6">
+                        <div class="font-black text-gray-800 text-xs uppercase">${d.nom_beneficiaire}</div>
+                        <div class="text-[10px] text-gray-400 italic mt-1">${d.details_intention}</div>
                     </td>
-                    <td class="p-4 font-mono text-xs text-blue-600 font-bold">${d.transaction_id}</td>
-                    <td class="p-4 font-black text-gray-700">${d.montant_offrande} F</td>
-                    <td class="p-4">
+                    <td class="p-6 font-mono text-xs text-blue-600 font-bold">${d.transaction_id}</td>
+                    <td class="p-6 font-black text-gray-700">${d.montant_offrande} FCFA</td>
+                    <td class="p-6 text-right">
                         ${d.statut_paiement === 'en_attente' 
-                            ? `<button onclick="valider('${d.id}')" class="bg-green-600 text-white px-4 py-2 rounded-xl text-[10px] font-black hover:bg-green-700 shadow-md">VALIDER</button>` 
-                            : `<span class="text-green-600 font-black text-xs">✅ ENCAISSÉ</span>`
-                        }
+                            ? `<button onclick="validerMesse('${d.id}')" class="bg-green-600 text-white px-4 py-2 rounded-xl text-[10px] font-black hover:bg-green-700 shadow-md transition">VALIDER</button>`
+                            : `<span class="text-green-600 font-black text-xs uppercase italic">Encaissé ✅</span>`}
                     </td>
                 </tr>
             `).join('');
         }
 
-        async function valider(id) {
-            if(confirm("Valider ce paiement ? Cela débloquera le reçu PDF du fidèle.")) {
+        async function validerMesse(id) {
+            if(confirm("Confirmer la réception du paiement ?")) {
                 const { error } = await _supabase.from('demandes_messes').update({ statut_paiement: 'confirme' }).eq('id', id);
-                if(error) alert(error.message); else location.reload();
+                if(error) alert(error.message); else fetchMesses();
             }
         }
-        window.onload = loadAdmin;
-    </script>
-    <div class="max-w-6xl mx-auto mt-10 p-6 bg-white rounded-[2.5rem] shadow-2xl border">
-    <h2 class="text-xl font-black text-blue-900 uppercase mb-6">Mise à jour de la Liturgie</h2>
-    <form id="formLiturgie" class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input type="text" id="litCouleur" placeholder="Couleur (VERT, ROUGE, BLANC...)" class="p-4 bg-gray-50 border rounded-2xl outline-none" required>
-            <input type="text" id="litTitreJour" placeholder="Titre du jour (ex: 22ème Dimanche Temps Ordinaire)" class="md:col-span-2 p-4 bg-gray-50 border rounded-2xl outline-none" required>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-2">
-                <input type="text" id="litL1Titre" placeholder="Titre 1ère Lecture" class="w-full p-3 border rounded-xl font-bold">
-                <textarea id="litL1Texte" placeholder="Texte 1ère Lecture" class="w-full p-3 border rounded-xl h-32 text-sm"></textarea>
-            </div>
-            <div class="space-y-2">
-                <input type="text" id="litPsTitre" placeholder="Titre Psaume" class="w-full p-3 border rounded-xl font-bold">
-                <textarea id="litPsTexte" placeholder="Texte Psaume" class="w-full p-3 border rounded-xl h-32 text-sm"></textarea>
-            </div>
-            <div class="space-y-2">
-                <input type="text" id="litL2Titre" placeholder="Titre 2ème Lecture (Optionnel)" class="w-full p-3 border rounded-xl font-bold">
-                <textarea id="litL2Texte" placeholder="Texte 2ème Lecture" class="w-full p-3 border rounded-xl h-32 text-sm"></textarea>
-            </div>
-            <div class="space-y-2">
-                <input type="text" id="litEvTitre" placeholder="Titre Évangile" class="w-full p-3 border rounded-xl font-bold">
-                <textarea id="litEvTexte" placeholder="Texte Évangile" class="w-full p-3 border rounded-xl h-32 text-sm"></textarea>
-            </div>
-        </div>
-        <button type="submit" class="w-full bg-blue-900 text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-green-600 transition">Publier la Parole du jour</button>
-    </form>
-</div>
-<div class="max-w-6xl mx-auto mt-10">
-    <div class="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border">
-        <div class="p-8 bg-[#23318E] text-white flex justify-between items-center">
-            <div>
-                <h2 class="text-xl font-black uppercase tracking-widest">Surveillance des Membres</h2>
-                <p class="text-[10px] opacity-60 font-bold uppercase mt-1">Direct & Historique des connexions</p>
-            </div>
-            <div class="bg-green-500 px-4 py-1 rounded-full text-[10px] font-black animate-pulse">LIVE</div>
-        </div>
-        
-        <table class="w-full text-left">
-            <thead class="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
-                <tr>
-                    <th class="p-6">Utilisateur</th>
-                    <th class="p-6">Dernière activité</th>
-                    <th class="p-6">Statut</th>
-                    <th class="p-6 text-right">Actions</th>
+
+        // --- SURVEILLANCE DES MEMBRES ---
+        async function monitorUsers() {
+            const { data: users } = await _supabase.from('profiles').select('*').order('last_seen', { ascending: false });
+            
+            const channel = _supabase.channel('online-users');
+            let onlineIds = [];
+
+            channel.on('presence', { event: 'sync' }, () => {
+                const state = channel.presenceState();
+                onlineIds = Object.keys(state);
+                renderUserTable(users, onlineIds);
+            }).subscribe();
+
+            renderUserTable(users, onlineIds);
+        }
+
+        function renderUserTable(users, onlineIds) {
+            const table = document.getElementById('userMonitoringTable');
+            if(!users) return;
+            table.innerHTML = users.map(u => `
+                <tr class="hover:bg-gray-50">
+                    <td class="p-6">
+                        <div class="font-black text-gray-800 uppercase text-xs">${u.username || 'Inconnu'}</div>
+                        <div class="text-[9px] text-gray-400">${u.email || ''}</div>
+                    </td>
+                    <td class="p-6 text-[10px] font-bold text-gray-500">${new Date(u.last_seen).toLocaleString()}</td>
+                    <td class="p-6">
+                        ${onlineIds.includes(u.id) 
+                            ? '<span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-[9px] font-black uppercase italic animate-pulse">● Connecté</span>' 
+                            : '<span class="bg-gray-100 text-gray-400 px-3 py-1 rounded-full text-[9px] font-black uppercase">Hors Ligne</span>'}
+                    </td>
+                    <td class="p-6 text-right">
+                        <button onclick="toggleUserStatus('${u.id}', ${!u.is_active})" class="px-4 py-2 rounded-xl text-[10px] font-black shadow-sm ${u.is_active ? 'bg-red-50 text-red-600' : 'bg-green-600 text-white'}">
+                            ${u.is_active ? 'DÉCONNECTER' : 'RÉACTIVER'}
+                        </button>
+                    </td>
                 </tr>
-            </thead>
-            <tbody id="userMonitoringTable" class="divide-y text-sm">
-                <!-- Chargement dynamique -->
-            </tbody>
-        </table>
-    </div>
-</div>
+            `).join('');
+        }
 
-<script>
-    // Script d'envoi pour l'admin
-    const formLit = document.getElementById('formLiturgie');
-    if(formLit) {
-        formLit.onsubmit = async (e) => {
-            e.preventDefault();
-            const data = {
-                date_jour: new Date().toISOString().split('T')[0],
-                couleur: document.getElementById('litCouleur').value.toUpperCase(),
-                titre_jour: document.getElementById('litTitreJour').value,
-                lecture1_titre: document.getElementById('litL1Titre').value,
-                lecture1_texte: document.getElementById('litL1Texte').value,
-                psaume_titre: document.getElementById('litPsTitre').value,
-                psaume_texte: document.getElementById('litPsTexte').value,
-                lecture2_titre: document.getElementById('litL2Titre').value,
-                lecture2_texte: document.getElementById('litL2Texte').value,
-                evangile_titre: document.getElementById('litEvTitre').value,
-                evangile_texte: document.getElementById('litEvTexte').value
-            };
+        async function toggleUserStatus(id, status) {
+            if(confirm("Voulez-vous modifier le statut de ce membre ?")) {
+                await _supabase.from('profiles').update({ is_active: status }).eq('id', id);
+                location.reload();
+            }
+        }
 
-            const { error } = await _supabase.from('liturgie_maison').upsert([data]);
-            if(error) alert(error.message);
-            else alert("📖 Liturgie du jour publiée avec succès !");
-        };
-    }
-</script>
+        window.onload = loadAdminAccess;
+    </script>
 </body>
 </html>
