@@ -2,6 +2,73 @@ const supabaseUrl = 'https://mkufkdtreeqcycnjtcxe.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rdWZrZHRyZWVxY3ljbmp0Y3hlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NTA0MjUsImV4cCI6MjA4NzQyNjQyNX0.XG3G_aRQ_NKAu9gxgvWNpKiRCIAX83cps8Jou8S4ne0'; 
 const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
+// --- LOGIQUE DU COMPTE À REBOURS (INDEX) ---
+async function demarrerCountdown() {
+    const { data } = await _supabase.from('celebrations').select('*').gt('date_heure', new Date().toISOString()).order('date_heure', {ascending: true}).limit(1);
+    
+    if (data && data[0]) {
+        const cible = new Date(data[0].date_heure).getTime();
+        document.getElementById('nomMesse').innerText = data[0].nom_celebration;
+
+        const x = setInterval(function() {
+            const maintenant = new Date().getTime();
+            const distance = cible - maintenant;
+
+            const jours = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const heures = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const secondes = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("countdown").innerHTML = `${jours}j ${heures}h ${minutes}m ${secondes}s`;
+
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("countdown").innerHTML = "EN COURS";
+            }
+        }, 1000);
+    }
+}
+
+// --- LOGIQUE MODAL PUBLIC (ANNONCES & INFOS) ---
+async function ouvrirModalPublic(type) {
+    const titre = document.getElementById('modalPublicTitre');
+    const contenu = document.getElementById('modalPublicContenu');
+    const modal = document.getElementById('modalPublic');
+
+    modal.classList.remove('hidden');
+    contenu.innerHTML = "Chargement...";
+
+    if (type === 'annonces') {
+        titre.innerText = "📢 Dernières Annonces";
+        const { data } = await _supabase.from('annonces').select('*').order('created_at', {ascending: false});
+        contenu.innerHTML = data.map(a => `
+            <div class="p-6 bg-slate-50 rounded-2xl border-l-4 border-blue-900">
+                <h4 class="font-black text-blue-900 text-sm uppercase">${a.titre}</h4>
+                <p class="text-xs text-gray-500 my-2">${a.contenu}</p>
+                <small class="text-[9px] font-bold text-gray-400 uppercase">${new Date(a.created_at).toLocaleDateString()}</small>
+            </div>
+        `).join('');
+    } else {
+        titre.innerText = "🤝 Informations Paroissiales";
+        const { data } = await _supabase.from('infos_paroisse').select('*');
+        contenu.innerHTML = data.map(i => `
+            <div class="mb-6">
+                <h4 class="font-black text-blue-900 uppercase border-b pb-2 mb-3">${i.titre}</h4>
+                <div class="text-sm text-gray-600 italic leading-relaxed">${i.contenu}</div>
+            </div>
+        `).join('');
+    }
+}
+
+function fermerModalPublic() {
+    document.getElementById('modalPublic').classList.add('hidden');
+}
+
+// Lancement automatique si on est sur l'index
+if (document.getElementById('countdown')) {
+    demarrerCountdown();
+}
+
 // ==========================================
 // 1. AUTHENTIFICATION & RÔLES
 // ==========================================

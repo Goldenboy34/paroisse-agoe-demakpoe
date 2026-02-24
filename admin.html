@@ -221,5 +221,29 @@
             location.reload();
         }
     </script>
+    <!-- Dans admin.html -->
+<div class="bg-white p-8 rounded-[2.5rem] shadow-xl border">
+    <h3 class="text-xs font-black uppercase text-slate-400 mb-6 tracking-widest">⏱️ Régler Prochaine Messe</h3>
+    <form id="formCelebration" class="space-y-4">
+        <input type="text" id="celNom" placeholder="Nom (Ex: Messe de Noël)" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none" required>
+        <input type="datetime-local" id="celDate" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none" required>
+        <button type="submit" class="w-full bg-red-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg">Mettre à jour le Countdown</button>
+    </form>
+</div>
+
+<script>
+    const formCel = document.getElementById('formCelebration');
+    if(formCel) {
+        formCel.onsubmit = async (e) => {
+            e.preventDefault();
+            await _supabase.from('celebrations').insert([{
+                nom_celebration: document.getElementById('celNom').value,
+                date_heure: document.getElementById('celDate').value
+            }]);
+            alert("Compte à rebours mis à jour sur la page d'accueil !");
+            location.reload();
+        };
+    }
+</script>
 </body>
 </html>
