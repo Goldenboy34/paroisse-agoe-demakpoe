@@ -3,38 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion | NDA</title>
+    <title>Connexion | NDA Démakpoè</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
+<body class="bg-slate-50 flex items-center justify-center min-h-screen p-4">
     <div class="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl w-full max-w-md border border-gray-100">
-        <div class="text-center mb-10">
-            <img src="logo-paroisse.jpeg.jpeg" class="h-24 w-24 mx-auto rounded-full mb-4 shadow-xl object-cover border-4 border-[#23318E]" onerror="this.src='https://via.placeholder.com/150'">
+        <div class="text-center mb-8">
+            <img src="logo-paroisse.jpeg.jpeg" class="h-20 w-20 mx-auto rounded-full mb-4 shadow-lg object-cover border-4 border-[#23318E]" onerror="this.src='https://via.placeholder.com/150'">
             <h2 id="authTitle" class="text-3xl font-black text-[#23318E]">Connexion</h2>
-            <p class="text-gray-400 mt-2 text-sm italic">Espace numérique NDA Démakpoè</p>
+            <p class="text-gray-400 mt-2 text-sm italic italic">Espace numérique NDA Démakpoè</p>
         </div>
 
-        <form id="authForm" class="space-y-5">
+        <form id="authForm" class="space-y-4">
+            <!-- Champ Pseudo : affiché uniquement à l'inscription -->
             <div id="usernameField" class="hidden">
-                <input type="text" id="username" placeholder="Votre Nom et Prénom" class="w-full p-4 bg-gray-50 border rounded-2xl outline-none focus:border-[#23318E]">
+                <label class="text-[10px] font-black uppercase text-gray-400 ml-4 mb-1 block">Nom & Prénom</label>
+                <input type="text" id="username" placeholder="Ex: Koffi Mensah" class="w-full p-4 bg-gray-50 border rounded-2xl outline-none focus:border-[#23318E] transition">
+            </div>
+
+            <div>
+                <label class="text-[10px] font-black uppercase text-gray-400 ml-4 mb-1 block">Identifiant</label>
+                <input type="text" id="identifier" placeholder="Email ou N° de Téléphone" class="w-full p-4 bg-gray-50 border rounded-2xl outline-none focus:border-[#23318E] transition" required>
             </div>
             
-            <input type="text" id="identifier" placeholder="Email ou N° Téléphone" class="w-full p-4 bg-gray-50 border rounded-2xl outline-none focus:border-[#23318E] transition" required>
+            <div>
+                <label class="text-[10px] font-black uppercase text-gray-400 ml-4 mb-1 block">Mot de passe</label>
+                <input type="password" id="password" placeholder="Votre mot de passe" class="w-full p-4 bg-gray-50 border rounded-2xl outline-none focus:border-[#23318E] transition" required>
+            </div>
             
-            <input type="password" id="password" placeholder="Mot de passe" class="w-full p-4 bg-gray-50 border rounded-2xl outline-none focus:border-[#23318E] transition" required>
-            
-            <button type="submit" id="authBtn" class="w-full bg-[#23318E] text-white py-4 rounded-2xl font-bold text-lg hover:bg-[#E30613] transition shadow-lg uppercase mt-4">Entrer</button>
+            <button type="submit" id="authBtn" class="w-full bg-[#23318E] text-white py-4 rounded-2xl font-black text-lg hover:bg-[#E30613] transition shadow-lg uppercase tracking-widest mt-4 active:scale-95">Entrer</button>
         </form>
 
-        <p class="text-center mt-10 text-sm text-gray-500">
+        <p class="text-center mt-8 text-sm text-gray-500 font-medium">
             <span id="toggleText">Pas encore inscrit ?</span> 
-            <button id="toggleAuth" class="text-[#23318E] font-bold underline ml-1">Créer un compte</button>
+            <button type="button" id="toggleAuth" class="text-[#23318E] font-black underline ml-1">Créer un compte</button>
         </p>
+        
         <div class="text-center mt-6">
-            <a href="index.html" class="text-xs text-gray-400 hover:underline">Retour à l'accueil</a>
+            <a href="index.html" class="text-xs text-gray-300 hover:text-[#23318E] transition font-bold uppercase tracking-widest">Retour à l'accueil</a>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
