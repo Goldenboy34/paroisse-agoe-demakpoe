@@ -3,10 +3,10 @@ const supabaseUrl = 'https://mkufkdtreeqcycnjtcxe.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rdWZrZHRyZWVxY3ljbmp0Y3hlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NTA0MjUsImV4cCI6MjA4NzQyNjQyNX0.XG3G_aRQ_NKAu9gxgvWNpKiRCIAX83cps8Jou8S4ne0'; 
 const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-// --- 1. AUTHENTIFICATION (LOGIN / REGISTER) ---
+// --- 1. AUTHENTIFICATION (INDEX / AUTH) ---
+let isSignUp = false;
 const authForm = document.getElementById('authForm');
 const toggleAuth = document.getElementById('toggleAuth');
-let isSignUp = false;
 
 if (toggleAuth) {
     toggleAuth.onclick = () => {
@@ -26,100 +26,150 @@ if (authForm) {
         const password = document.getElementById('password').value;
         const username = document.getElementById('username')?.value;
 
+        // Cas : Email simple ou numéro de téléphone (Supabase demande souvent email)
+        const emailToSubmit = email.includes('@') ? email : `${email}@nda.tg`;
+
         if (isSignUp) {
-            const { data, error } = await _supabase.auth.signUp({ email, password });
-            if (error) alert("Erreur: " + error.message);
+            const { data, error } = await _supabase.auth.signUp({ email: emailToSubmit, password });
+            if (error) alert(error.message);
             else {
                 await _supabase.from('profiles').insert([{ id: data.user.id, username: username, role: 'membre' }]);
-                alert("Compte créé ! Vérifiez vos emails.");
+                alert("Compte créé ! Veuillez vous connecter.");
+                location.reload();
             }
         } else {
-            const { error } = await _supabase.auth.signInWithPassword({ email, password });
-            if (error) alert("Erreur: " + error.message);
+            const { error } = await _supabase.auth.signInWithPassword({ email: emailToSubmit, password });
+            if (error) alert("Accès refusé. Vérifiez vos identifiants.");
             else window.location.href = 'dashboard.html';
         }
     };
 }
 
-// --- 2. GESTION DU DASHBOARD & MESSES ---
-async function ouvrirModalMesse() {
-    document.getElementById('modalMesse').classList.remove('hidden');
-}
-
-function fermerModalMesse() {
-    document.getElementById('modalMesse').classList.add('hidden');
-}
-
-const formMesse = document.getElementById('formMesse');
-if (formMesse) {
-    formMesse.onsubmit = async (e) => {
-        e.preventDefault();
-        const { data: { user } } = await _supabase.auth.getUser();
-        const messe = {
-            user_id: user.id,
-            nom_beneficiaire: document.getElementById('messeNom').value,
-            intention: document.getElementById('messeIntention').value,
-            type_priere: document.getElementById('typePriere').value,
-            transaction_id: document.getElementById('transIdMesse').value,
-            statut_paiement: 'en_attente'
-        };
-        const { error } = await _supabase.from('demandes_messes').insert([messe]);
-        if (error) alert(error.message);
-        else { alert("Demande de messe envoyée !"); fermerModalMesse(); chargerHistorique(user.id); }
-    };
-}
-
-async function chargerHistorique(uid) {
-    const { data } = await _supabase.from('demandes_messes').select('*').eq('user_id', uid).order('created_at', {ascending: false});
-    const container = document.getElementById('historiqueContent');
-    if (!container) return;
-    container.innerHTML = data.map(m => `
-        <div class="p-3 bg-slate-50 rounded-xl border-l-4 ${m.statut_paiement === 'confirme' ? 'border-green-500' : 'border-blue-500'} mb-2">
-            <div class="text-[10px] font-black uppercase text-slate-800">${m.nom_beneficiaire}</div>
-            <div class="text-[9px] text-slate-500">${m.intention.substring(0, 50)}...</div>
-            <div class="text-[8px] font-bold mt-1 uppercase">${m.statut_paiement === 'confirme' ? '✅ Confirmée' : '⏳ En attente'}</div>
-        </div>
-    `).join('');
-}
-
-// --- 3. COUNTDOWN (HOME) ---
-async function demarrerCountdown() {
-    const { data } = await _supabase.from('celebrations').select('*').gt('date_heure', new Date().toISOString()).order('date_heure', {ascending: true}).limit(1);
-    if (data && data[0]) {
-        const cible = new Date(data[0].date_heure).getTime();
-        document.getElementById('nomMesse').innerText = data[0].nom_celebration;
-        setInterval(function() {
-            const distance = cible - new Date().getTime();
-            const j = Math.floor(distance / (86400000)), h = Math.floor((distance % 86400000) / 3600000), m = Math.floor((distance % 3600000) / 60000), s = Math.floor((distance % 60000) / 1000);
-            document.getElementById("countdown").innerHTML = `${j}j ${h}h ${m}m ${s}s`;
-        }, 1000);
-    }
-}
-
-// --- 4. INITIALISATION GENERALE ---
-async function init() {
+// --- 2. SURVEILLANCE UTILISATEUR ET SÉCURITÉ ---
+async function checkUser() {
     const { data: { user } } = await _supabase.auth.getUser();
     
-    // Déconnexion
-    const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn) logoutBtn.onclick = async () => { await _supabase.auth.signOut(); window.location.href = 'index.html'; };
+    // Pages nécessitant d'être connecté
+    const isPrivate = ['dashboard.html', 'admin.html', 'lectures.html'].some(p => window.location.pathname.includes(p));
 
-    // Si on est sur l'index (Public)
-    if (document.getElementById('countdown')) demarrerCountdown();
+    if (!user && isPrivate) {
+        window.location.href = 'auth.html';
+        return;
+    }
 
-    // Si on est connecté
     if (user) {
-        const { data: profile } = await _supabase.from('profiles').select('*').eq('id', user.id).single();
-        if (document.getElementById('displayUsername')) document.getElementById('displayUsername').innerText = profile.username;
-        if (document.getElementById('welcomeTitle')) document.getElementById('welcomeTitle').innerHTML = `Bienvenue, <span class="text-[#23318E]">${profile.username}</span> 👋`;
+        // Mise à jour presence
+        await _supabase.from('profiles').update({ last_seen: new Date().toISOString() }).eq('id', user.id);
         
-        chargerAnnonces();
-        chargerGalerie();
+        const { data: profile } = await _supabase.from('profiles').select('*').eq('id', user.id).single();
+        
+        // Affichage Nom
+        if(document.getElementById('displayUsername')) document.getElementById('displayUsername').innerText = profile.username;
+        if(document.getElementById('welcomeTitle')) document.getElementById('welcomeTitle').innerHTML = `Bienvenue, <span class="text-[#23318E]">${profile.username}</span> 👋`;
+
+        // Données Dashboard
         if (window.location.pathname.includes('dashboard.html')) {
-            chargerHistorique(user.id);
-            chargerDons(user.id);
+            chargerAnnoncesDashboard();
+            chargerGalerieDashboard();
+            chargerHistoriqueMesses(user.id);
+            chargerHistoriqueDons(user.id);
         }
     }
 }
 
-document.addEventListener('DOMContentLoaded', init);
+// --- 3. DÉCONNEXION ---
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+    logoutBtn.onclick = async () => {
+        await _supabase.auth.signOut();
+        window.location.href = 'index.html';
+    };
+}
+
+// --- 4. LOGIQUE DES ANNONCES ---
+async function chargerAnnoncesDashboard() {
+    const { data } = await _supabase.from('annonces').select('*').order('created_at', {ascending: false}).limit(5);
+    const container = document.getElementById('listeAnnonces');
+    if(container && data.length > 0) {
+        document.getElementById('sectionAnnonces').classList.remove('hidden');
+        container.innerHTML = data.map(a => `
+            <div class="min-w-[280px] bg-white p-5 rounded-[2rem] shadow-lg border-b-4 ${a.priorite === 'urgent' ? 'border-red-500' : 'border-blue-900'}">
+                <h4 class="font-black text-[11px] uppercase text-[#23318E] mb-2">${a.titre}</h4>
+                <p class="text-[10px] text-gray-500 leading-relaxed italic">"${a.contenu}"</p>
+            </div>
+        `).join('');
+    }
+}
+
+// --- 5. HISTORIQUE & DONS ---
+async function chargerHistoriqueMesses(uid) {
+    const { data } = await _supabase.from('demandes_messes').select('*').eq('user_id', uid).order('created_at', {ascending: false});
+    const container = document.getElementById('historiqueContent');
+    if(container) {
+        container.innerHTML = data.length ? data.map(m => `
+            <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl mb-2 border">
+                <div class="text-[10px] font-black uppercase">${m.nom_beneficiaire}</div>
+                <div class="text-[8px] font-bold ${m.statut_paiement === 'confirme' ? 'text-green-600' : 'text-blue-600'}">
+                    ${m.statut_paiement === 'confirme' ? 'CONFIRMÉE ✅' : 'EN ATTENTE ⏳'}
+                </div>
+            </div>
+        `).join('') : '<p class="text-[10px] italic text-gray-400">Aucune demande.</p>';
+    }
+}
+
+async function chargerHistoriqueDons(uid) {
+    const { data } = await _supabase.from('dons').select('*').eq('user_id', uid).order('created_at', {ascending: false});
+    const container = document.getElementById('historiqueDons');
+    if(container) {
+        container.innerHTML = data.length ? data.map(d => `
+            <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl mb-2 border">
+                <div>
+                    <div class="text-[9px] font-black uppercase text-green-700">${d.type_don}</div>
+                    <div class="text-[11px] font-bold">${d.montant} FCFA</div>
+                </div>
+                ${d.statut === 'confirme' 
+                    ? `<button onclick="genererCertificatDon('${d.id}')" class="bg-green-600 text-white px-2 py-1 rounded text-[8px] font-black">REÇU PDF</button>` 
+                    : '<span class="text-[8px] italic text-orange-500">Vérification...</span>'}
+            </div>
+        `).join('') : '<p class="text-[10px] italic text-gray-400">Aucun don.</p>';
+    }
+}
+
+// --- 6. GÉNÉRATION DE REÇU PDF ---
+async function genererCertificatDon(id) {
+    const { data: d } = await _supabase.from('dons').select('*, profiles(username)').eq('id', id).single();
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.setFillColor(35, 49, 142); doc.rect(0, 0, 210, 40, 'F');
+    doc.setTextColor(255); doc.setFontSize(18); doc.text("REÇU DE DON OFFICIEL", 105, 20, {align:'center'});
+    doc.setFontSize(8); doc.text("PAROISSE NOTRE DAME DE L'ASSOMPTION - DÉMAKPOÈ", 105, 30, {align:'center'});
+
+    doc.setTextColor(0); doc.setFontSize(12);
+    doc.text(`Donateur : ${d.profiles.username.toUpperCase()}`, 20, 60);
+    doc.text(`Type de contribution : ${d.type_don}`, 20, 75);
+    doc.text(`Montant versé : ${d.montant} FCFA`, 20, 90);
+    doc.text(`ID Transaction : ${d.transaction_id}`, 20, 105);
+    doc.text(`Fait à Lomé, le ${new Date(d.created_at).toLocaleDateString()}`, 20, 130);
+
+    doc.setDrawColor(200); doc.line(20, 140, 190, 140);
+    doc.setFontSize(8); doc.text("Merci pour votre générosité. 'Dieu aime celui qui donne avec joie.'", 105, 150, {align:'center'});
+
+    doc.save(`Recu_NDA_${id.substring(0,5)}.pdf`);
+}
+
+// --- 7. GALERIE ---
+async function chargerGalerieDashboard() {
+    const { data } = await _supabase.from('galerie').select('*').order('created_at', {ascending: false}).limit(4);
+    const container = document.getElementById('galeriePhotos');
+    if(container && data) {
+        container.innerHTML = data.map(img => `
+            <div class="aspect-square rounded-2xl overflow-hidden shadow">
+                <img src="${img.url_image}" class="w-full h-full object-cover">
+            </div>
+        `).join('');
+    }
+}
+
+// --- 8. INITIALISATION AU CHARGEMENT ---
+document.addEventListener('DOMContentLoaded', checkUser);
