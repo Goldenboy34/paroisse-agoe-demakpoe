@@ -3,107 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Espace | NDA</title>
+    <title>Espace Fidèle | NDA Démakpoè</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-50 pb-20">
+<body class="flex min-h-screen">
 
-    <nav class="bg-[#23318E] text-white p-4 flex justify-between items-center px-6 sticky top-0 z-50 shadow-xl">
-        <div class="flex items-center gap-3">
-            <img src="logo-paroisse.jpeg.jpeg" class="h-8 w-8 rounded-full border border-white object-cover">
-            <span class="font-black text-[10px] tracking-widest uppercase">NDA DÉMAKPOÈ</span>
+    <img src="gr.jpg" class="marie-bg" alt="Fond">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-slate-900 text-white flex flex-col fixed h-full z-[100] rounded-r-[2.5rem] shadow-2xl">
+        <div class="p-8">
+            <img src="logo-paroisse.jpeg.jpeg" class="h-16 w-16 rounded-full border-2 border-gold mx-auto mb-4 object-cover">
+            <h1 class="text-center font-black text-[10px] tracking-widest uppercase text-white">NDA DÉMAKPOÈ</h1>
         </div>
-        <div class="flex items-center gap-4">
-            <span id="displayUsername" class="text-[10px] font-black uppercase bg-white/20 px-3 py-1 rounded-full">...</span>
-            <button id="logoutBtn" class="bg-red-600 px-3 py-1 rounded text-[10px] font-bold">SORTIR</button>
-        </div>
-    </nav>
-
-    <div class="max-w-4xl mx-auto p-6">
-        <h1 id="welcomeTitle" class="text-3xl font-black text-gray-800 mb-8 italic">Bienvenue...</h1>
-
-        <!-- ANNONCES -->
-        <div id="sectionAnnonces" class="mb-10 hidden">
-            <h2 class="text-[10px] font-black uppercase text-gray-400 mb-4 tracking-widest">📢 Dernières Nouvelles</h2>
-            <div id="listeAnnonces" class="flex gap-4 overflow-x-auto pb-4"></div>
-        </div>
-
-        <!-- ACTIONS -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-            <button onclick="ouvrirModalMesse()" class="bg-[#23318E] text-white p-6 rounded-[2rem] shadow-lg flex flex-col items-center">
-                <span class="text-2xl mb-2">🙏</span>
-                <span class="text-[10px] font-black uppercase">Messes</span>
-            </button>
-            <button onclick="document.getElementById('modalDon').classList.remove('hidden')" class="bg-white p-6 rounded-[2rem] shadow-md border flex flex-col items-center">
-                <span class="text-2xl mb-2">💰</span>
-                <span class="text-[10px] font-black uppercase text-gray-600">Dons</span>
-            </button>
-            <button onclick="window.location.href='lectures.html'" class="bg-white p-6 rounded-[2rem] shadow-md border flex flex-col items-center">
-                <span class="text-2xl mb-2">📖</span>
-                <span class="text-[10px] font-black uppercase text-gray-600">Lectures</span>
-            </button>
-            <button onclick="window.location.href='index.html'" class="bg-white p-6 rounded-[2rem] shadow-md border flex flex-col items-center">
-                <span class="text-2xl mb-2">🏠</span>
-                <span class="text-[10px] font-black uppercase text-gray-600">Accueil</span>
+        <nav class="flex-1 px-4 space-y-2">
+            <a href="dashboard.html" class="flex items-center gap-4 p-4 bg-gold/20 text-gold rounded-2xl transition-all">
+                <i class="fa-solid fa-house-user"></i>
+                <span class="text-xs font-bold uppercase tracking-widest">Dashboard</span>
+            </a>
+            <a href="lectures.html" class="flex items-center gap-4 p-4 text-slate-400 hover:text-white hover:bg-white/5 rounded-2xl transition-all">
+                <i class="fa-solid fa-book-bible"></i>
+                <span class="text-xs font-bold uppercase tracking-widest">Lectures</span>
+            </a>
+            <a href="index.html" class="flex items-center gap-4 p-4 text-slate-400 hover:text-white hover:bg-white/5 rounded-2xl transition-all">
+                <i class="fa-solid fa-earth-africa"></i>
+                <span class="text-xs font-bold uppercase tracking-widest">Site Public</span>
+            </a>
+        </nav>
+        <div class="p-8">
+            <button onclick="logout()" class="w-full bg-red-600/20 text-red-500 p-4 rounded-2xl flex items-center justify-center gap-3 hover:bg-red-600 hover:text-white transition-all">
+                <i class="fa-solid fa-power-off"></i>
+                <span class="text-[10px] font-black uppercase">Déconnexion</span>
             </button>
         </div>
+    </aside>
 
-        <!-- HISTORIQUES -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="bg-white p-6 rounded-[2.5rem] shadow-xl border">
-                <h3 class="text-[10px] font-black uppercase text-[#23318E] mb-4 border-b pb-2">Mes Demandes de Messes</h3>
-                <div id="historiqueContent" class="space-y-2 text-gray-400 text-xs italic">Aucune demande.</div>
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 ml-64 p-10 relative z-10 min-h-screen">
+        
+        <!-- TOP BAR (Bienvenue & Profil) -->
+        <header class="flex justify-between items-center mb-12">
+            <div class="relative w-96">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" placeholder="Rechercher une annonce..." class="w-full bg-[#F5F1E8]/80 backdrop-blur-md border border-slate-200 rounded-2xl py-3 pl-12 text-xs focus:ring-2 focus:ring-gold transition-all">
             </div>
-            <div class="bg-white p-6 rounded-[2.5rem] shadow-xl border">
-                <h3 class="text-[10px] font-black uppercase text-green-600 mb-4 border-b pb-2">Mes Dons & Dîmes</h3>
-                <div id="historiqueDons" class="space-y-2 text-gray-400 text-xs italic">Aucun don enregistré.</div>
+            
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-[10px] text-gold font-bold uppercase tracking-widest">Bienvenue,</p>
+                    <p id="userNameText" class="text-sm font-black text-slate-900 leading-none">Chargement...</p>
+                </div>
+                <!-- Zone Photo de Profil Clickable -->
+                <div class="relative group cursor-pointer" onclick="document.getElementById('profileUpload').click()">
+                    <div id="userPhotoContainer" class="h-12 w-12 bg-slate-900 rounded-full flex items-center justify-center text-white shadow-lg overflow-hidden border-2 border-gold/30">
+                        <i id="userIcon" class="fa-solid fa-user"></i>
+                        <img id="userPhoto" class="hidden h-full w-full object-cover">
+                    </div>
+                    <div class="absolute -bottom-1 -right-1 bg-gold text-white text-[8px] p-1 rounded-full shadow-md">
+                        <i class="fa-solid fa-camera"></i>
+                    </div>
+                    <input type="file" id="profileUpload" class="hidden" accept="image/*">
+                </div>
+            </div>
+        </header>
+
+        <!-- ACTIONS RAPIDES -->
+        <h2 class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-6">Actions Rapides</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            
+            <div onclick="openModal('modalMesse')" class="glass-card-dark p-8 group cursor-pointer hover:scale-105 transition-all duration-500 shadow-xl border-t-4 border-gold">
+                <div class="flex justify-between items-start mb-8">
+                    <div class="h-12 w-12 bg-gold/20 rounded-2xl flex items-center justify-center text-xl text-gold"><i class="fa-solid fa-cross"></i></div>
+                    <i class="fa-solid fa-ellipsis-vertical text-slate-500"></i>
+                </div>
+                <p class="font-black text-sm uppercase tracking-widest text-white">Demande de Messe</p>
+                <p class="text-[10px] text-slate-400 mt-1 italic">Envoyez vos intentions de prière</p>
+            </div>
+
+            <div onclick="openModal('modalDon')" class="glass-card p-8 bg-[#F5F1E8]/80 group cursor-pointer hover:border-gold transition-all duration-500 shadow-sm border-t-4 border-slate-200">
+                <div class="flex justify-between items-start mb-8">
+                    <div class="h-12 w-12 bg-gold/10 rounded-2xl flex items-center justify-center text-xl text-gold"><i class="fa-solid fa-hand-holding-heart"></i></div>
+                    <i class="fa-solid fa-ellipsis-vertical text-slate-300"></i>
+                </div>
+                <p class="font-black text-sm uppercase tracking-widest text-slate-900">Dîmes & Offrandes</p>
+                <p class="text-[10px] text-gold font-bold mt-1 italic">Soutenez la paroisse</p>
+            </div>
+
+            <div onclick="openModal('modalVie')" class="glass-card p-8 bg-[#F5F1E8]/80 group cursor-pointer hover:border-slate-900 transition-all duration-500 shadow-sm border-t-4 border-slate-200">
+                <div class="flex justify-between items-start mb-8">
+                    <div class="h-12 w-12 bg-slate-100 rounded-2xl flex items-center justify-center text-xl text-slate-900"><i class="fa-solid fa-calendar-check"></i></div>
+                    <i class="fa-solid fa-ellipsis-vertical text-slate-300"></i>
+                </div>
+                <p class="font-black text-sm uppercase tracking-widest text-slate-900">Vie Paroissiale</p>
+                <p class="text-[10px] text-slate-400 mt-1 italic">Mouvements & Responsables</p>
             </div>
         </div>
-    </div>
+
+        <!-- HISTORIQUE -->
+        <div class="bg-[#F5F1E8]/90 backdrop-blur-md rounded-[2.5rem] p-8 shadow-sm border border-white/50">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="font-black text-[10px] uppercase tracking-widest text-slate-900">Historique des Intentions</h3>
+                <button class="text-[9px] font-bold text-gold uppercase border-b border-gold">Voir tout</button>
+            </div>
+            
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                        <th class="pb-4">Bénéficiaire</th>
+                        <th class="pb-4">Type</th>
+                        <th class="pb-4">Date</th>
+                        <th class="pb-4">Statut</th>
+                        <th class="pb-4 text-right">Reçu</th>
+                    </tr>
+                </thead>
+                <tbody id="historiqueMesseTable" class="text-xs">
+                    <!-- JS chargera les lignes ici -->
+                </tbody>
+            </table>
+        </div>
+    </main>
 
     <!-- MODAL MESSE -->
-    <div id="modalMesse" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-[100] p-4">
-        <div class="bg-white w-full max-w-md rounded-[2.5rem] p-8">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-black text-[#23318E]">DEMANDER UNE MESSE</h2>
-                <button onclick="fermerModalMesse()" class="text-gray-300 text-2xl">✕</button>
-            </div>
+    <div id="modalMesse" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-[200] p-4">
+        <div class="glass-card p-8 w-full max-w-lg border-t-8 border-slate-900 shadow-2xl relative">
+            <button onclick="closeModal('modalMesse')" class="absolute top-4 right-4 text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-2xl font-serif italic text-slate-900 mb-6">Demande de Messe</h3>
             <form id="formMesse" class="space-y-4">
-                <input type="text" id="messeNom" placeholder="Nom du bénéficiaire" class="w-full p-4 bg-gray-50 border rounded-2xl outline-none text-sm" required>
-                <select id="typePriere" class="w-full p-4 bg-gray-50 border rounded-2xl outline-none text-sm">
-                    <option value="Action de grâce">Action de grâce</option>
-                    <option value="Repos de l'âme">Repos de l'âme</option>
-                    <option value="Intention particulière">Intention particulière</option>
-                </select>
-                <textarea id="messeIntention" placeholder="Votre intention..." class="w-full p-4 bg-gray-50 border rounded-2xl h-24 outline-none text-sm" required></textarea>
-                <input type="text" id="transIdMesse" placeholder="ID Transaction (T-Money/Flooz)" class="w-full p-4 bg-gray-50 border rounded-2xl outline-none text-sm" required>
-                <button type="submit" class="w-full bg-[#23318E] text-white py-4 rounded-2xl font-black uppercase tracking-widest">Envoyer la demande</button>
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" id="messeBeneficiaire" placeholder="Bénéficiaire" class="input-pro" required>
+                    <select id="messeType" class="input-pro">
+                        <option value="Action de Grâce">Action de Grâce</option>
+                        <option value="Repos de l'âme">Repos de l'âme</option>
+                        <option value="Santé/Succès">Santé & Succès</option>
+                    </select>
+                </div>
+                <textarea id="messeIntention" placeholder="Votre intention..." class="input-pro h-24"></textarea>
+                <input type="text" id="messeTransaction" placeholder="ID Transaction (T-Money/Flooz)" class="input-pro" required>
+                <button type="submit" class="btn-gold w-full py-4 mt-2">Envoyer l'intention</button>
             </form>
         </div>
     </div>
 
     <!-- MODAL DON -->
-    <div id="modalDon" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-[100] p-4">
-        <div class="bg-white w-full max-w-md rounded-[2.5rem] p-8">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-black text-green-600 uppercase">Faire un Don</h2>
-                <button onclick="document.getElementById('modalDon').classList.add('hidden')" class="text-gray-300 text-2xl">✕</button>
-            </div>
+    <div id="modalDon" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-[200] p-4">
+        <div class="glass-card p-8 w-full max-w-md border-t-8 border-gold shadow-2xl relative">
+            <button onclick="closeModal('modalDon')" class="absolute top-4 right-4 text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-2xl font-serif italic text-slate-900 mb-6">Dons & Offrandes</h3>
             <form id="formDon" class="space-y-4">
-                <select id="typeDon" class="w-full p-4 bg-gray-50 border rounded-2xl outline-none text-sm">
-                    <option value="Dîme">Dîme mensuelle</option>
-                    <option value="Travaux">Travaux Paroisse</option>
-                    <option value="Charité">Offrande de Messe</option>
+                <select id="donType" class="input-pro">
+                    <option value="Dîme">Dîme</option>
+                    <option value="Offrande">Offrande</option>
+                    <option value="Projet Paroissial">Projet Paroissial</option>
                 </select>
-                <input type="number" id="montantDon" placeholder="Montant (FCFA)" class="w-full p-4 bg-gray-50 border rounded-2xl outline-none text-sm" required>
-                <input type="text" id="transIdDon" placeholder="ID Transaction" class="w-full p-4 bg-gray-50 border rounded-2xl outline-none text-sm" required>
-                <button type="submit" class="w-full bg-green-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest">Confirmer le Don</button>
+                <input type="number" id="donMontant" placeholder="Montant (FCFA)" class="input-pro" required>
+                <input type="text" id="donTransaction" placeholder="ID Transaction" class="input-pro" required>
+                <button type="submit" class="btn-gold w-full py-4 mt-2">Valider le don</button>
             </form>
         </div>
     </div>
 
+    <!-- MODAL VIE PAROISSIALE -->
+    <div id="modalVie" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-[200] p-4">
+        <div class="glass-card p-8 w-full max-w-2xl border-t-8 border-slate-900 shadow-2xl relative max-h-[80vh] overflow-y-auto">
+            <button onclick="closeModal('modalVie')" class="absolute top-4 right-4 text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-2xl font-serif italic text-slate-900 mb-6">Mouvements & Responsables</h3>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="p-4 bg-white/50 rounded-2xl border border-gold/10">
+                    <p class="text-xs font-black text-slate-900 uppercase">Chorale Sainte Cécile</p>
+                    <p class="text-[10px] text-slate-500">Resp : M. Jean KPODAR</p>
+                </div>
+                <div class="p-4 bg-white/50 rounded-2xl border border-gold/10">
+                    <p class="text-xs font-black text-slate-900 uppercase">Légion de Marie</p>
+                    <p class="text-[10px] text-slate-500">Resp : Mme Thérèse</p>
+                </div>
+                <div class="p-4 bg-white/50 rounded-2xl border border-gold/10">
+                    <p class="text-xs font-black text-slate-900 uppercase">Comité des Jeunes</p>
+                    <p class="text-[10px] text-slate-500">Resp : M. Kodjo</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
 </body>
 </html>

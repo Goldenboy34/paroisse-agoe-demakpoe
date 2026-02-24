@@ -1,0 +1,312 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,900&family=Inter:wght@300;400;700;900&display=swap');
+
+:root {
+    --navy: #0F172A;
+    --gold: #B8860B;
+    --gold-light: #D4AF37;
+    --parchment: #F5F1E8; 
+}
+
+/* BASE */
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--parchment);
+    color: var(--navy);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* FILIGRANE MARIAL */
+.marie-bg {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 550px;
+    opacity: 0.18; 
+    mix-blend-mode: multiply;
+    filter: sepia(0.3) contrast(1.1);
+    z-index: 0;
+    pointer-events: none;
+    mask-image: radial-gradient(circle, black 30%, transparent 80%);
+}
+
+/* EFFETS GLASS-CARD */
+.glass-card {
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* BOUTONS & ÉLÉMENTS OR */
+.btn-gold {
+    background: var(--navy);
+    color: white;
+    padding: 14px 35px;
+    border-radius: 100px;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 2px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: none;
+}
+
+.btn-gold:hover { 
+    background: var(--gold); 
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 20px rgba(184, 134, 11, 0.3);
+}
+
+.text-gold { color: var(--gold); }
+
+/* ANIMATIONS */
+.reveal {
+    animation: fadeIn 1.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pulse-gold {
+    animation: pulseGold 3s infinite;
+}
+
+@keyframes pulseGold {
+    0% { box-shadow: 0 0 0 0 rgba(184, 134, 11, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(184, 134, 11, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(184, 134, 11, 0); }
+}
+
+/* FORMULAIRES (Utilisés dans auth et admin) */
+.input-pro {
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: 25px;
+    outline: none;
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
+
+.input-pro:focus {
+    border-color: var(--gold);
+    background: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+/* MOBILE OPTIMIZATION */
+@media (max-width: 768px) {
+    .marie-bg { width: 300px; }
+    h2 { font-size: 3.5rem !important; }
+}
+/* Animation pour le bloc des secondes */
+#seconds {
+    font-variant-numeric: tabular-nums; /* Empêche le texte de bouger quand les chiffres changent */
+}
+
+#countdown div {
+    transition: transform 0.3s ease;
+}
+
+#countdown div:hover {
+    transform: translateY(-5px);
+    border-color: var(--gold);
+}
+/* Ajustement pour les icônes dans les inputs */
+.input-pro.pl-12 {
+    padding-left: 3.5rem !important;
+}
+
+#authTitle {
+    transition: opacity 0.3s ease;
+}
+
+.fa-spin {
+    animation: spin 1s linear infinite;
+}
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+/* EFFET DE VERRE ULTRA-TRANSPARENT */
+.glass-card {
+    /* On descend à 0.2 ou 0.3 pour voir l'image derrière */
+    background: rgba(255, 255, 255, 0.2) !important; 
+    
+    /* Le flou est crucial pour que le texte reste lisible sur l'image */
+    backdrop-filter: blur(15px); 
+    -webkit-backdrop-filter: blur(15px);
+    
+    border-radius: 40px;
+    /* Une bordure légère pour définir la forme */
+    border: 1px solid rgba(255, 255, 255, 0.3); 
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+}
+
+/* RENDRE LES INPUTS AUSSI SEMI-TRANSPARENTS */
+.input-pro {
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+    /* Fond très léger pour les champs */
+    background: rgba(255, 255, 255, 0.4) !important; 
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    outline: none;
+    font-size: 0.9rem;
+    transition: 0.3s;
+    color: var(--navy);
+}
+
+.input-pro:focus {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border-color: var(--gold);
+}
+
+/* RENDRE LES LABELS PLUS VISIBLES SI BESOIN */
+label {
+    text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+}
+.marie-bg {
+    /* ... tes autres réglages ... */
+    opacity: 0.35; /* Au lieu de 0.15 ou 0.18 */
+}
+/* Sidebar Links Hover Effect */
+aside nav a:hover {
+    background: rgba(184, 134, 11, 0.1);
+    color: #B8860B;
+}
+
+/* Table styling inspired by Google Drive */
+#historiqueMesseTable tr {
+    transition: all 0.2s ease;
+    cursor: default;
+}
+
+#historiqueMesseTable tr:hover {
+    background-color: rgba(248, 250, 252, 0.8);
+    transform: scale(1.002);
+}
+
+/* Forcer la visibilité du texte dans les zones claires */
+.text-slate-900 { color: #0F172A !important; }
+.text-slate-400 { color: #94A3B8 !important; }
+/* --- AJOUTS DASHBOARD --- */
+
+/* Animation d'entrée pour les modaux */
+#modalMesse, #modalDon {
+    animation: fadeIn 0.3s ease-out;
+}
+
+#modalMesse > div, #modalDon > div {
+    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Style spécifique pour les select dans les modaux */
+select.input-pro {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%230F172A'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1.5rem center;
+    background-size: 1rem;
+}
+/* --- NOUVEAUX STYLES DASHBOARD --- */
+
+/* Carte Sombre (Inspirée de la nav Navy) */
+.glass-card-dark {
+    background: #0F172A !important; /* Navy pur */
+    border-radius: 40px;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    transition: 0.4s;
+}
+
+.glass-card-dark:hover {
+    box-shadow: 0 25px 50px rgba(184, 134, 11, 0.15);
+}
+
+/* On s'assure que le fond du dashboard est bien blanc cassé comme l'accueil */
+body.bg-dashboard {
+    background-color: #F5F1E8 !important; /* Parchment */
+}
+
+/* Correction visuelle des tableaux */
+#historiqueMesseTable tr td {
+    color: #0F172A !important; /* Navy pour le texte */
+    font-weight: 500;
+}
+
+#historiqueMesseTable tr:hover {
+    background: rgba(184, 134, 11, 0.05) !important;
+}
+
+/* Style des badges de statut */
+.status-badge-pending {
+    background: rgba(184, 134, 11, 0.1);
+    color: #B8860B;
+    border: 1px solid rgba(184, 134, 11, 0.2);
+}
+/* --- HARMONISATION BEIGE DASHBOARD --- */
+
+/* Appliquer le fond parchemin à tout le dashboard */
+body {
+    background-color: var(--parchment) !important;
+}
+
+/* On ajuste la marie-bg pour qu'elle soit bien visible derrière le dashboard */
+.marie-bg {
+    opacity: 0.25; /* Augmenté légèrement pour le dashboard */
+    z-index: 0;
+}
+
+/* Style des cartes en mode "parchemin" pour plus de douceur */
+.glass-card {
+    background: rgba(245, 241, 232, 0.7) !important; /* Couleur #F5F1E8 avec transparence */
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+/* Style pour la barre latérale (Sidebar) pour qu'elle tranche bien avec le beige */
+aside {
+    border-right: 1px solid rgba(184, 134, 11, 0.1);
+}
+
+/* Les lignes du tableau dans l'historique */
+#historiqueMesseTable tr {
+    border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+}
+
+#historiqueMesseTable tr:hover {
+    background: rgba(184, 134, 11, 0.05) !important;
+}
+/* Style pour les textes de lectures */
+#contenuLectures div.text-slate-800 {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    text-align: justify;
+}
+
+#contenuLectures .font-serif {
+    font-family: 'Playfair Display', serif;
+}
+
+/* Effet sur les cartes de lecture */
+.glass-card {
+    transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+    background: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15);
+}

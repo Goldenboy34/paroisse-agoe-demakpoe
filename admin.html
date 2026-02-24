@@ -3,220 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration Générale | NDA</title>
+    <title>Grand Secrétariat | Administration NDA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-100 min-h-screen pb-20 font-sans text-slate-900">
+<body class="bg-[#F8FAFC] flex min-h-screen">
 
-    <!-- NAVBAR ADMIN -->
-    <nav class="bg-[#23318E] text-white p-6 shadow-2xl sticky top-0 z-[100] flex justify-between items-center px-6 md:px-12">
-        <div>
-            <h1 class="font-black uppercase tracking-tighter text-xl leading-none">Grand Secrétariat NDA</h1>
-            <span class="text-[8px] opacity-60 uppercase font-bold tracking-widest">Contrôle Total de la Paroisse</span>
+    <!-- SIDEBAR (Style Image : Navy Sombre) -->
+    <aside class="w-72 bg-[#0F172A] text-white flex flex-col fixed h-full z-[100]">
+        <div class="p-8 flex items-center gap-3 border-b border-white/10">
+            <img src="logo-paroisse.jpeg.jpeg" class="h-10 w-10 rounded-xl border border-gold">
+            <h1 class="font-black text-xs tracking-tighter uppercase leading-tight">Secrétariat<br><span class="text-gold">NDA Démakpoè</span></h1>
         </div>
-        <div class="flex gap-4">
-            <a href="dashboard.html" class="bg-white/10 px-6 py-2 rounded-full text-[10px] font-black hover:bg-white/20 transition uppercase tracking-widest border border-white/20">Mon Espace</a>
-            <button id="logoutBtn" class="bg-red-600/20 text-red-400 px-6 py-2 rounded-full text-[10px] font-black hover:bg-red-600 hover:text-white transition uppercase border border-red-600/20">Déconnexion</button>
-        </div>
-    </nav>
 
-    <div class="max-w-7xl mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <nav class="flex-1 px-4 py-8 space-y-1">
+            <p class="text-[10px] font-black text-slate-500 uppercase px-4 mb-4 tracking-widest">Menu Principal</p>
+            <a href="#" class="flex items-center gap-4 p-4 bg-blue-600 rounded-xl text-sm font-bold shadow-lg shadow-blue-600/20">
+                <i class="fa-solid fa-chart-pie"></i> Tableau de bord
+            </a>
+            <a href="#sectionMesses" class="flex items-center gap-4 p-4 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all text-sm">
+                <i class="fa-solid fa-envelope-open-text"></i> Demandes de Messes
+            </a>
+            <a href="#sectionMembres" class="flex items-center gap-4 p-4 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all text-sm">
+                <i class="fa-solid fa-users"></i> Gestion des Fidèles
+            </a>
+            <a href="#sectionContenu" class="flex items-center gap-4 p-4 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all text-sm">
+                <i class="fa-solid fa-pen-nib"></i> Publications & Parole
+            </a>
+        </nav>
+
+        <div class="p-8 border-t border-white/10">
+            <button onclick="logout()" class="w-full bg-red-500/10 text-red-500 p-4 rounded-xl flex items-center justify-center gap-3 hover:bg-red-500 hover:text-white transition-all text-xs font-black uppercase">
+                <i class="fa-solid fa-power-off"></i> Déconnexion
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 ml-72 p-8">
         
-        <!-- COLONNE GAUCHE : GESTION FLUX -->
-        <div class="lg:col-span-8 space-y-8">
-            
-            <!-- 1. RADAR DES MEMBRES -->
-            <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border">
-                <div class="p-6 bg-[#23318E] text-white flex justify-between items-center">
-                    <h2 class="text-sm font-black uppercase tracking-widest">Radar des Membres</h2>
-                    <div class="bg-green-500 px-3 py-1 rounded-full text-[9px] font-black uppercase">Activité Récente</div>
+        <!-- TOP BAR (Style Image) -->
+        <header class="flex justify-between items-center mb-10">
+            <h2 class="text-xl font-bold text-slate-800">Vue d'ensemble</h2>
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2 text-slate-400 text-sm">
+                    <i class="fa-solid fa-calendar-day"></i> <span id="currentDate">--/--/----</span>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-50 font-black uppercase text-slate-400 border-b">
-                            <tr><th class="p-4">Utilisateur</th><th class="p-4">Dernier Passage</th><th class="p-4">Statut</th><th class="p-4 text-right">Action</th></tr>
-                        </thead>
-                        <tbody id="userMonitoringTable" class="divide-y divide-slate-50"></tbody>
-                    </table>
+                <div class="flex items-center gap-3 bg-white p-2 px-4 rounded-full shadow-sm border border-slate-100">
+                    <div class="text-right"><p class="text-[10px] font-black text-slate-900 leading-none">Admin NDA</p><p class="text-[9px] text-green-500 font-bold uppercase">En ligne</p></div>
+                    <img src="logo-paroisse.jpeg.jpeg" class="h-8 w-8 rounded-full">
                 </div>
             </div>
+        </header>
 
-            <!-- 2. VALIDATION MESSES -->
-            <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border">
-                <div class="p-6 border-b flex justify-between items-center">
-                    <h2 class="text-sm font-black uppercase tracking-widest text-[#23318E]">Demandes de Messes</h2>
-                    <span class="text-[9px] bg-blue-50 text-blue-600 px-2 py-1 rounded-lg font-bold">À TRAITER</span>
-                </div>
-                <div id="adminTableMesses" class="divide-y divide-slate-50 max-h-[400px] overflow-y-auto p-2">
-                    <!-- Injecté par JS -->
-                </div>
+        <!-- STATS RAPIDES (Style Image : Petites Cartes) -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Fidèles en ligne</p>
+                <h3 id="onlineCount" class="text-3xl font-black text-blue-600">0</h3>
             </div>
-
-            <!-- 3. VALIDATION DONS -->
-            <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border">
-                <div class="p-6 border-b bg-green-50 flex justify-between items-center">
-                    <h2 class="text-sm font-black uppercase tracking-widest text-green-700">Dons & Dîmes Reçus</h2>
-                    <span class="text-2xl">💰</span>
-                </div>
-                <div id="adminTableDons" class="divide-y divide-slate-50 p-2">
-                    <!-- Injecté par JS -->
-                </div>
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Messes en attente</p>
+                <h3 id="pendingMesseCount" class="text-3xl font-black text-orange-500">0</h3>
+            </div>
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Dons ce mois</p>
+                <h3 id="donTotal" class="text-3xl font-black text-green-600">0 <span class="text-xs">F</span></h3>
             </div>
         </div>
 
-        <!-- COLONNE DROITE : PUBLICATIONS -->
-        <div class="lg:col-span-4 space-y-8">
+        <div class="grid lg:grid-cols-12 gap-8">
             
-            <!-- 4. PUBLIER ANNONCE -->
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border">
-                <h3 class="text-xs font-black uppercase text-slate-400 mb-6 tracking-widest">📢 Publier une Annonce</h3>
-                <form id="formAdminAnnonce" class="space-y-4">
-                    <input type="text" id="annTitre" placeholder="Titre (ex: Réunion Chorale)" class="w-full p-4 bg-slate-50 rounded-2xl outline-none text-sm border focus:border-blue-500" required>
-                    <select id="annPriorite" class="w-full p-4 bg-slate-50 rounded-2xl outline-none text-sm border">
-                        <option value="normal">Priorité Normale</option>
-                        <option value="urgent">Urgent 🚨</option>
-                    </select>
-                    <textarea id="annContenu" placeholder="Message court..." class="w-full p-4 bg-slate-50 rounded-2xl h-24 text-sm border outline-none" required></textarea>
-                    <button type="submit" class="w-full bg-[#23318E] text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg active:scale-95 transition">Diffuser</button>
-                </form>
+            <!-- SECTION GAUCHE : VALIDATIONS ET RADAR -->
+            <div class="lg:col-span-8 space-y-8">
+                <!-- RADAR DES MEMBRES (Comme sur ton image à droite) -->
+                <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-6 border-b border-slate-50 flex justify-between items-center">
+                        <h4 class="font-black text-xs uppercase text-slate-800">Radar des membres connectés</h4>
+                        <i class="fa-solid fa-satellite-dish text-blue-500 animate-pulse"></i>
+                    </div>
+                    <div class="p-0">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase">
+                                <tr>
+                                    <th class="p-4">Membre</th>
+                                    <th class="p-4">Dernier accès</th>
+                                    <th class="p-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userRadarTable" class="text-xs divide-y divide-slate-50">
+                                <!-- JS chargera les membres ici -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- VALIDATION MESSES -->
+                <div id="sectionMesses" class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
+                    <h4 class="font-black text-xs uppercase text-slate-800 mb-6">Demandes de Messes à valider</h4>
+                    <div id="adminMesseTable" class="space-y-4">
+                        <!-- Demandes chargées par JS -->
+                    </div>
+                </div>
             </div>
 
-            <!-- 5. LITURGIE DU JOUR -->
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border border-blue-100">
-                <h3 class="text-xs font-black uppercase text-slate-400 mb-6 tracking-widest">📖 Parole de Dieu</h3>
-                <form id="formLiturgie" class="space-y-4">
-                    <input type="date" id="litDate" class="w-full p-3 bg-slate-50 rounded-xl text-xs border" required>
-                    <select id="litCouleur" class="w-full p-3 bg-slate-50 rounded-xl text-xs outline-none border">
-                        <option value="VERT">VERT</option><option value="BLANC">BLANC</option><option value="ROUGE">ROUGE</option><option value="VIOLET">VIOLET</option>
-                    </select>
-                    <input type="text" id="litTitreJour" placeholder="Nom du jour" class="w-full p-3 bg-slate-50 rounded-xl text-xs border outline-none">
-                    <input type="text" id="litEvTitre" placeholder="Titre Évangile" class="w-full p-3 bg-slate-50 rounded-xl text-xs border outline-none">
-                    <textarea id="litEvTexte" placeholder="Texte de l'Évangile..." class="w-full p-3 bg-slate-50 rounded-xl h-20 text-[10px] outline-none border"></textarea>
-                    <button type="submit" class="w-full bg-slate-800 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest">Mettre à jour la Parole</button>
-                </form>
-            </div>
+            <!-- SECTION DROITE : PUBLICATION ET GESTION -->
+            <div class="lg:col-span-4 space-y-8">
+                <!-- PUBLIER PAROLE DE DIEU -->
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+                    <h4 class="font-black text-xs uppercase text-purple-700 mb-6"><i class="fa-solid fa-plus mr-2"></i> Publier Liturgie</h4>
+                    <!-- FORMULAIRE LITURGIE COMPLET -->
+<form id="formLiturgie" class="space-y-4">
+    <div class="grid grid-cols-2 gap-4">
+        <input type="date" id="litDate" class="w-full p-3 bg-slate-50 border-none rounded-xl text-xs" required>
+        <select id="litCouleur" class="w-full p-3 bg-slate-50 border-none rounded-xl text-xs">
+            <option value="VERT">VERT (Temps Ordinaire)</option>
+            <option value="VIOLET">VIOLET (Carême/Avent)</option>
+            <option value="BLANC">BLANC (Fêtes)</option>
+            <option value="ROUGE">ROUGE (Martyrs)</option>
+        </select>
+    </div>
+    
+    <input type="text" id="litTitre" placeholder="Titre du jour (ex: 5ème Dimanche du Temps Ordinaire)" class="w-full p-3 bg-slate-50 border-none rounded-xl text-xs" required>
 
-            <!-- 6. COUNTDOWN PROCHAINE MESSE -->
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border border-red-100">
-                <h3 class="text-xs font-black uppercase text-slate-400 mb-6 tracking-widest">⏱️ Régler Prochaine Messe</h3>
-                <form id="formCelebration" class="space-y-4">
-                    <input type="text" id="celNom" placeholder="Nom (Ex: Messe du Dimanche)" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none text-sm" required>
-                    <input type="datetime-local" id="celDate" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none text-sm" required>
-                    <button type="submit" class="w-full bg-red-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg">Lancer le compte à rebours</button>
-                </form>
-            </div>
-        </div>
+    <!-- Première Lecture -->
+    <div class="space-y-2">
+        <input type="text" id="litL1" placeholder="Référence 1ère Lecture (ex: Is 58, 7-10)" class="w-full p-3 bg-slate-50 border-none rounded-xl text-[10px]">
+        <textarea id="litL1Texte" placeholder="Texte de la 1ère lecture..." class="w-full h-24 bg-slate-50 border-none rounded-xl text-xs p-4"></textarea>
     </div>
 
+    <!-- Psaume -->
+    <div class="space-y-2">
+        <input type="text" id="litPs" placeholder="Référence Psaume (ex: Ps 111)" class="w-full p-3 bg-slate-50 border-none rounded-xl text-[10px]">
+        <textarea id="litPsTexte" placeholder="Texte du psaume..." class="w-full h-24 bg-slate-50 border-none rounded-xl text-xs p-4"></textarea>
+    </div>
+
+    <!-- Deuxième Lecture -->
+    <div class="space-y-2">
+        <input type="text" id="litL2" placeholder="Référence 2ème Lecture (ex: 1 Co 2, 1-5)" class="w-full p-3 bg-slate-50 border-none rounded-xl text-[10px]">
+        <textarea id="litL2Texte" placeholder="Texte de la 2ème lecture..." class="w-full h-24 bg-slate-50 border-none rounded-xl text-xs p-4"></textarea>
+    </div>
+
+    <!-- Évangile -->
+    <div class="space-y-2">
+        <input type="text" id="litEv" placeholder="Référence Évangile (ex: Mt 5, 13-16)" class="w-full p-3 bg-slate-50 border-none rounded-xl text-[10px]">
+        <textarea id="litEvTexte" placeholder="Texte de l'Évangile..." class="w-full h-32 bg-slate-50 border-none rounded-xl text-xs p-4" required></textarea>
+    </div>
+
+    <button type="submit" class="w-full bg-purple-700 text-white py-4 rounded-xl font-black text-[10px] uppercase shadow-lg shadow-purple-200">
+        <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Publier la Parole du Jour
+    </button>
+</form>
+
+                <!-- GESTION CONTENU (Suppression/Modif) -->
+                <div id="sectionContenu" class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+                    <h4 class="font-black text-xs uppercase text-slate-800 mb-6">Gestion des publications</h4>
+                    
+                    <div class="space-y-4">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Dernières Annonces</p>
+                        <div id="adminAnnoncesList" class="space-y-2 max-h-60 overflow-y-auto pr-2">
+                            <!-- JS chargera la liste avec boutons Supprimer -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
-    <script>
-        // Logique spécifique Admin (Initialisation après chargement de script.js)
-        window.addEventListener('DOMContentLoaded', async () => {
-            // Sécurité : Vérifier si Admin
-            const { data: { user } } = await _supabase.auth.getUser();
-            const { data: profile } = await _supabase.from('profiles').select('role').eq('id', user.id).single();
-            
-            if (profile.role !== 'admin') {
-                window.location.href = 'dashboard.html';
-                return;
-            }
-
-            // Charger les données
-            fetchMessesAdmin();
-            fetchDonsAdmin();
-            monitorUsersAdmin();
-            initAdminForms();
-        });
-
-        async function fetchMessesAdmin() {
-            const { data } = await _supabase.from('demandes_messes').select('*').order('created_at', {ascending: false});
-            document.getElementById('adminTableMesses').innerHTML = data.map(m => `
-                <div class="flex justify-between items-center p-4 hover:bg-slate-50 transition border-b">
-                    <div class="text-[10px]">
-                        <div class="font-black uppercase text-slate-800">${m.nom_beneficiaire}</div>
-                        <div class="text-slate-400 font-bold">${m.type_priere} • ID: ${m.transaction_id}</div>
-                    </div>
-                    ${m.statut_paiement === 'en_attente' 
-                        ? `<button onclick="validerAction('demandes_messes', '${m.id}')" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-[9px] font-black uppercase">Valider</button>` 
-                        : `<span class="text-green-600 font-black text-[9px] uppercase italic">Confirmé ✅</span>`}
-                </div>
-            `).join('');
-        }
-
-        async function fetchDonsAdmin() {
-            const { data } = await _supabase.from('dons').select('*, profiles(username)').order('created_at', {ascending: false});
-            document.getElementById('adminTableDons').innerHTML = data.map(d => `
-                <div class="flex justify-between items-center p-4 hover:bg-slate-50 border-b">
-                    <div class="text-[10px]">
-                        <div class="font-black uppercase text-slate-800">${d.profiles?.username || 'Utilisateur'}</div>
-                        <div class="text-green-600 font-bold">${d.montant} FCFA • ${d.type_don}</div>
-                    </div>
-                    ${d.statut === 'en_attente' 
-                        ? `<button onclick="validerAction('dons', '${d.id}')" class="bg-green-600 text-white px-4 py-2 rounded-xl text-[9px] font-black uppercase">Encaisser</button>` 
-                        : `<span class="text-green-600 font-black text-[9px] uppercase italic">Vérifié ✅</span>`}
-                </div>
-            `).join('');
-        }
-
-        async function monitorUsersAdmin() {
-            const { data: users } = await _supabase.from('profiles').select('*').order('last_seen', { ascending: false });
-            document.getElementById('userMonitoringTable').innerHTML = users.map(u => `
-                <tr class="hover:bg-slate-50 border-b">
-                    <td class="p-4">
-                        <div class="font-black text-slate-800 text-[11px] uppercase">${u.username}</div>
-                        <div class="text-[8px] text-slate-400 font-bold">${u.role.toUpperCase()}</div>
-                    </td>
-                    <td class="p-4 text-[9px] font-bold text-slate-500">${new Date(u.last_seen).toLocaleString()}</td>
-                    <td class="p-4">
-                        <span class="text-slate-300 font-bold text-[8px] uppercase">${u.is_active ? '✅ Actif' : '🚫 Bloqué'}</span>
-                    </td>
-                    <td class="p-4 text-right">
-                        <button onclick="toggleUserStatus('${u.id}', ${!u.is_active})" class="px-3 py-1.5 rounded-lg text-[8px] font-black ${u.is_active ? 'bg-red-50 text-red-600' : 'bg-green-600 text-white'}">
-                            ${u.is_active ? 'BLOQUER' : 'ACTIVER'}
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function initAdminForms() {
-            document.getElementById('formAdminAnnonce').onsubmit = async (e) => {
-                e.preventDefault();
-                await _supabase.from('annonces').insert([{ titre: document.getElementById('annTitre').value, contenu: document.getElementById('annContenu').value, priorite: document.getElementById('annPriorite').value }]);
-                alert("Annonce publiée !"); location.reload();
-            };
-
-            document.getElementById('formLiturgie').onsubmit = async (e) => {
-                e.preventDefault();
-                const d = { 
-                    date_jour: document.getElementById('litDate').value, 
-                    couleur: document.getElementById('litCouleur').value,
-                    titre_jour: document.getElementById('litTitreJour').value,
-                    evangile_titre: document.getElementById('litEvTitre').value,
-                    evangile_texte: document.getElementById('litEvTexte').value
-                };
-                await _supabase.from('liturgie_maison').upsert([d]);
-                alert("Liturgie mise à jour !"); location.reload();
-            };
-
-            document.getElementById('formCelebration').onsubmit = async (e) => {
-                e.preventDefault();
-                await _supabase.from('celebrations').insert([{ nom_celebration: document.getElementById('celNom').value, date_heure: document.getElementById('celDate').value }]);
-                alert("Countdown mis à jour !"); location.reload();
-            };
-        }
-
-        async function validerAction(table, id) {
-            const column = table === 'dons' ? 'statut' : 'statut_paiement';
-            await _supabase.from(table).update({ [column]: 'confirme' }).eq('id', id);
-            location.reload();
-        }
-
-        async function toggleUserStatus(id, status) {
-            await _supabase.from('profiles').update({ is_active: status }).eq('id', id);
-            location.reload();
-        }
-    </script>
 </body>
 </html>

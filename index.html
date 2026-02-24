@@ -4,80 +4,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NDA Démakpoè | Accueil</title>
+    <!-- NE PAS SUPPRIMER CES LIGNES (C'est le CSS) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Inter', sans-serif; }</style>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-white">
-    <nav class="flex justify-between items-center p-4 md:p-6 bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-sm">
-        <div class="flex items-center gap-3">
-            <img src="logo-paroisse.jpeg.jpeg" class="h-10 w-10 md:h-12 md:w-12 rounded-full border-2 border-[#23318E] object-cover" onerror="this.src='https://via.placeholder.com/150'">
-            <span class="font-bold text-[#23318E] text-sm md:text-base tracking-tight uppercase">NDA Démakpoè</span>
-        </div>
-        <div class="flex gap-4">
-            <a href="auth.html" class="bg-[#23318E] text-white px-5 py-2 rounded-full font-bold hover:bg-[#E30613] transition text-sm">Connexion</a>
-        </div>
-    </nav>
+<body class="reveal">
+    <img src="gr.jpg" class="marie-bg" alt="Vierge Marie">
 
-    <header class="relative min-h-[85vh] flex items-center justify-center text-center px-4 overflow-hidden">
-        <div class="z-10 max-w-4xl">
-            <h1 class="text-5xl md:text-7xl font-['Playfair_Display'] text-white mb-6 drop-shadow-lg">La Foi qui agit par la Charité</h1>
-            <p class="text-xl text-gray-200 mb-10 max-w-2xl mx-auto italic">Bienvenue sur la plateforme digitale officielle de la Paroisse Notre Dame de l'Assomption d'Agoè Démakpoè.</p>
-            <div class="flex flex-col md:flex-row gap-4 justify-center">
-                <a href="auth.html" class="bg-[#E30613] text-white px-10 py-4 rounded-full font-black text-lg shadow-2xl hover:scale-105 transition uppercase tracking-widest">Rejoindre la Communauté</a>
+    <!-- NAV -->
+    <nav class="p-6 flex justify-between items-center max-w-7xl mx-auto relative z-[100]">
+        <div class="flex items-center gap-4">
+            <img src="logo-paroisse.jpeg.jpeg" class="h-14 w-14 rounded-full border-2 border-gold shadow-2xl pulse-gold">
+            <div>
+                <h1 class="font-black text-xl tracking-tighter text-slate-900 leading-none uppercase">Archidiocèse de Lomé</h1>
+                <p class="text-[8px] font-bold uppercase tracking-[0.1em] text-gold">Paroisse Notre Dame de l'Assomption d'Agoè Demakpoè</p>
             </div>
         </div>
-        <!-- Image de fond -->
-        <div class="absolute inset-0 bg-black/50 z-0"></div>
-        <img src="bg.jpg" class="absolute inset-0 w-full h-full object-cover -z-10" onerror="this.src='https://images.unsplash.com/photo-1548625149-fc4a29cf7092?auto=format&fit=crop&q=80'">
+        <a href="auth.html" class="btn-gold shadow-lg text-center">Espace Fidèle</a>
+    </nav>
+
+    <!-- HERO : COMPTEUR AU CENTRE -->
+    <header class="py-16 text-center px-6 relative z-10">
+        <div class="inline-block mb-4 px-4 py-1 border border-gold/30 rounded-full bg-white/50 backdrop-blur-sm">
+            <span class="text-[9px] font-black uppercase tracking-widest text-slate-500">Bienvenue sur le portail officiel</span>
+        </div>
+        <h2 class="text-6xl md:text-8xl font-serif italic mb-8 text-slate-900 drop-shadow-sm">Magnificat</h2>
+        
+        <div class="max-w-md mx-auto glass-card p-10 border-t-4 border-slate-900 shadow-2xl transform hover:scale-105 transition-transform duration-500">
+            <p id="nomMesse" class="text-[10px] font-black uppercase text-gold mb-6 tracking-widest">Recherche de la célébration...</p>
+            
+            <div id="countdown" class="flex justify-center gap-3 md:gap-4">
+                <div class="flex flex-col items-center bg-white/50 p-3 rounded-2xl min-w-[65px] border border-gold/10">
+                    <span id="days" class="text-2xl font-black text-slate-900">00</span>
+                    <span class="text-[7px] uppercase text-gold font-bold tracking-widest">Jours</span>
+                </div>
+                <div class="flex flex-col items-center bg-white/50 p-3 rounded-2xl min-w-[65px] border border-gold/10">
+                    <span id="hours" class="text-2xl font-black text-slate-900">00</span>
+                    <span class="text-[7px] uppercase text-gold font-bold tracking-widest">Heures</span>
+                </div>
+                <div class="flex flex-col items-center bg-white/50 p-3 rounded-2xl min-w-[65px] border border-gold/10">
+                    <span id="minutes" class="text-2xl font-black text-slate-900">00</span>
+                    <span class="text-[7px] uppercase text-gold font-bold tracking-widest">Min</span>
+                </div>
+                <div class="flex flex-col items-center bg-slate-900 p-3 rounded-2xl min-w-[65px] shadow-lg">
+                    <span id="seconds" class="text-2xl font-black text-white">00</span>
+                    <span class="text-[7px] uppercase text-gold/80 font-bold tracking-widest">Sec</span>
+                </div>
+            </div>
+        </div>
     </header>
 
-    <section class="py-20 px-6 max-w-6xl mx-auto grid md:grid-cols-3 gap-12 text-center">
-       <!-- SECTION SERVICES ACCUEIL -->
-<section class="py-20 px-6 max-w-6xl mx-auto grid md:grid-cols-3 gap-12 text-center">
-    <!-- BLOC ANNONCES -->
-    <div onclick="ouvrirModalPublic('annonces')" class="cursor-pointer group p-6 rounded-3xl hover:bg-slate-50 transition">
-        <div class="text-4xl mb-4 group-hover:scale-110 transition">🔔</div>
-        <h3 class="font-bold text-xl mb-2 text-[#23318E]">Annonces</h3>
-        <p class="text-gray-500 text-sm italic">Consultez les dernières nouvelles de la communauté.</p>
-    </div>
+    <!-- SECTION INFOS : HORAIRES À GAUCHE / CLERGÉ À DROITE -->
+    <main class="max-w-6xl mx-auto px-6 pb-20 relative z-10">
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+            
+            <!-- GAUCHE : HORAIRES -->
+            <div class="glass-card p-10 shadow-2xl relative overflow-hidden group">
+                <h4 class="font-serif italic text-3xl mb-8 text-gold">Horaires des Messes</h4>
+                <div class="space-y-6 text-sm relative z-10">
+                    <p class="flex justify-between border-b border-slate-100 pb-3 text-slate-600">
+                        <span>Lundi — Vendredi</span> 
+                        <b class="text-slate-900">05:45 & 18:30</b>
+                    </p>
+                    <p class="flex justify-between border-b border-slate-100 pb-3 text-slate-600">
+                        <span>Samedi Matin</span> 
+                        <b class="text-slate-900">06:00</b>
+                    </p>
+                    <div class="bg-slate-900/5 p-5 rounded-2xl border border-gold/20">
+                        <p class="flex justify-between text-gold font-black italic text-lg">
+                            <span>Dimanches</span> 
+                            <span>06:30 | 08:30</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
 
-    <!-- BLOC MESSES (COUNTDOWN) -->
-    <div onclick="window.location.href='auth.html'" class="group p-6 rounded-3xl bg-blue-50 border border-blue-100 shadow-xl">
-        <div class="text-4xl mb-4 group-hover:rotate-12 transition">🙏</div>
-        <h3 class="font-bold text-xl mb-2 text-[#23318E]">Prochaine Messe</h3>
-        <div id="countdown" class="text-red-600 font-black text-2xl tracking-tighter">--:--:--:--</div>
-        <p id="nomMesse" class="text-[10px] uppercase font-bold text-blue-400 mt-2">Chargement...</p>
-    </div>
+            <!-- DROITE : CLERGÉ -->
+            <div class="glass-card p-10 text-slate-900 shadow-xl">
+                <h4 class="text-[10px] font-black uppercase text-slate-400 mb-8 tracking-[0.3em]">Le Clergé Paroissial</h4>
+                <div class="grid grid-cols-1 gap-6">
+                    <div class="flex items-center gap-5 p-4 rounded-3xl hover:bg-white/50 transition-colors">
+                        <div class="h-14 w-14 bg-gradient-to-tr from-slate-100 to-white rounded-2xl flex items-center justify-center font-serif text-2xl text-gold shadow-inner">C</div>
+                        <div>
+                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Père Curé</p>
+                            <p class="text-lg font-serif italic text-slate-800">R.P. Emmanuel MAWUSI</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-5 p-4 rounded-3xl hover:bg-white/50 transition-colors">
+                        <div class="h-14 w-14 bg-gradient-to-tr from-slate-100 to-white rounded-2xl flex items-center justify-center font-serif text-2xl text-gold shadow-inner">V</div>
+                        <div>
+                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Vicaire</p>
+                            <p class="text-lg font-serif italic text-slate-800">R.P. Fabrice</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <!-- BLOC INFORMATIONS -->
-    <div onclick="ouvrirModalPublic('infos')" class="cursor-pointer group p-6 rounded-3xl hover:bg-slate-50 transition">
-        <div class="text-4xl mb-4 group-hover:scale-110 transition">🤝</div>
-        <h3 class="font-bold text-xl mb-2 text-[#23318E]">Informations</h3>
-        <p class="text-gray-500 text-sm italic">Tout savoir sur la Paroisse NDA Démakpoè.</p>
-    </div>
-</section>
-
-<!-- MODAL PUBLIC (CACHE PAR DEFAUT) -->
-<div id="modalPublic" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md hidden z-[100] flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-2xl rounded-[2.5rem] p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
-        <div class="flex justify-between items-center mb-6">
-            <h2 id="modalPublicTitre" class="text-2xl font-black text-[#23318E] uppercase">Titre</h2>
-            <button onclick="fermerModalPublic()" class="h-10 w-10 bg-slate-100 rounded-full font-bold">✕</button>
         </div>
-        <div id="modalPublicContenu" class="space-y-4">
-            <!-- Le contenu sera injecté ici -->
-        </div>
-    </div>
-</div>
+    </main>
 
-<!-- Ajoute Supabase sur l'index pour le countdown -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js"></script>
-    </section>
-
-    <footer class="bg-gray-900 text-white py-12 text-center">
-        <p class="text-sm opacity-60">© 2024 Paroisse Notre Dame de l'Assomption - Agoè Démakpoè</p>
-    </footer>
+    <!-- SCRIPTS JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
 </body>
 </html>
