@@ -8,71 +8,60 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+<!-- Remplacer le début du body jusqu'à la fin du Header -->
 <body class="flex min-h-screen bg-[#F5F1E8]">
-
     <img src="gr.jpg" class="marie-bg" alt="Fond">
 
-    <!-- SIDEBAR RESPONSIVE -->
-    <aside id="sidebar" class="fixed inset-y-0 left-0 z-[150] w-64 bg-slate-900 text-white transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 lg:flex lg:flex-col rounded-r-[2.5rem] lg:rounded-none shadow-2xl">
-        <div class="p-8">
+    <!-- SIDEBAR (Menu Mobile & Desktop) -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-[150] w-64 bg-slate-900 text-white transform -translate-x-full transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-0 lg:flex lg:flex-col rounded-r-[2.5rem] lg:rounded-none shadow-2xl">
+        <div class="p-8 relative">
             <button onclick="toggleSidebar()" class="lg:hidden absolute top-4 right-4 text-slate-400"><i class="fa-solid fa-xmark text-2xl"></i></button>
             <img src="logo-paroisse.jpeg.jpeg" class="h-16 w-16 rounded-full border-2 border-gold mx-auto mb-4 object-cover">
-            <h1 class="text-center font-black text-[10px] tracking-widest uppercase text-white">NDA DÉMAKPOÈ</h1>
+            <h1 class="text-center font-black text-[10px] tracking-widest uppercase">NDA DÉMAKPOÈ</h1>
         </div>
         <nav class="flex-1 px-4 space-y-2">
-            <a href="dashboard.html" class="flex items-center gap-4 p-4 bg-gold/20 text-gold rounded-2xl">
-                <i class="fa-solid fa-house-user"></i>
-                <span class="text-xs font-bold uppercase">Dashboard</span>
-            </a>
-            <a href="lectures.html" class="flex items-center gap-4 p-4 text-slate-400 hover:text-white rounded-2xl">
-                <i class="fa-solid fa-book-bible"></i>
-                <span class="text-xs font-bold uppercase">Lectures</span>
-            </a>
-            <a href="index.html" class="flex items-center gap-4 p-4 text-slate-400 hover:text-white rounded-2xl">
-                <i class="fa-solid fa-earth-africa"></i>
-                <span class="text-xs font-bold uppercase">Site Public</span>
-            </a>
+            <a href="dashboard.html" class="flex items-center gap-4 p-4 bg-gold/20 text-gold rounded-2xl"><i class="fa-solid fa-house-user"></i><span class="text-xs font-bold uppercase">Dashboard</span></a>
+            <a href="lectures.html" class="flex items-center gap-4 p-4 text-slate-400 hover:text-white rounded-2xl"><i class="fa-solid fa-book-bible"></i><span class="text-xs font-bold uppercase">Lectures</span></a>
+            <a href="index.html" class="flex items-center gap-4 p-4 text-slate-400 hover:text-white rounded-2xl"><i class="fa-solid fa-earth-africa"></i><span class="text-xs font-bold uppercase">Site Public</span></a>
         </nav>
-        <div class="p-8">
-            <button onclick="logout()" class="w-full bg-red-600/20 text-red-500 p-4 rounded-2xl flex items-center justify-center gap-3">
-                <i class="fa-solid fa-power-off"></i>
-                <span class="text-[10px] font-black uppercase">Déconnexion</span>
-            </button>
-        </div>
+        <div class="p-8"><button onclick="logout()" class="w-full bg-red-600/20 text-red-500 p-4 rounded-2xl flex items-center justify-center gap-3"><i class="fa-solid fa-power-off"></i><span class="text-[10px] font-black uppercase">Déconnexion</span></button></div>
     </aside>
 
+    <!-- Overlay pour fermer le menu mobile -->
     <div id="overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-[140] hidden lg:hidden"></div>
 
     <!-- MAIN CONTENT -->
-    <main class="flex-1 w-full p-4 lg:p-10 relative z-10 min-h-screen">
-        
-        <!-- HEADER -->
-        <header class="flex flex-col lg:flex-row justify-between items-center gap-6 mb-12">
-            <div class="flex items-center justify-between w-full lg:w-auto">
-                <button onclick="toggleSidebar()" class="lg:hidden text-slate-900 bg-white p-3 rounded-xl shadow-md">
+    <main class="flex-1 w-full p-4 lg:p-10 relative z-10">
+        <!-- HEADER DYNAMIQUE -->
+        <header class="flex justify-between items-center mb-10 bg-white/80 backdrop-blur-md p-4 rounded-[2rem] shadow-sm border border-white/50">
+            <!-- Gauche: Burger (Mobile) & Titre -->
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="lg:hidden text-slate-900 bg-slate-100 p-3 rounded-xl">
                     <i class="fa-solid fa-bars-staggered"></i>
                 </button>
-                <div class="lg:hidden flex items-center gap-3">
-                    <div class="text-right">
-                        <p id="userNameMobile" class="text-[10px] font-black text-slate-900 italic">FIDÈLE</p>
-                    </div>
-                </div>
+                <h2 class="hidden md:block font-serif italic text-xl text-slate-900">Mon Espace</h2>
             </div>
 
-            <div class="hidden lg:flex items-center gap-4 ml-auto">
+            <!-- Droite: ESPACE PROFIL (Mobile & PC) -->
+            <div id="profileTrigger" class="flex items-center gap-3 cursor-pointer group" onclick="document.getElementById('profileUpload').click()">
                 <div class="text-right">
-                    <p class="text-[10px] text-gold font-bold uppercase">Bienvenue,</p>
-                    <p id="userNameText" class="text-sm font-black text-slate-900 leading-none">Chargement...</p>
+                    <p class="text-[8px] font-black text-gold uppercase leading-none">Bienvenue,</p>
+                    <p id="userNameText" class="user-name-display text-[11px] md:text-sm font-black text-slate-900 leading-tight">Chargement...</p>
                 </div>
-                <div class="relative group cursor-pointer" onclick="document.getElementById('profileUpload').click()">
-                    <div class="h-12 w-12 bg-slate-900 rounded-full flex items-center justify-center text-white shadow-lg overflow-hidden border-2 border-gold/30">
-                        <i id="userIcon" class="fa-solid fa-user"></i>
-                        <img id="userPhoto" class="hidden h-full w-full object-cover">
+                <div class="relative">
+                    <div class="h-10 w-10 md:h-12 md:w-12 bg-slate-900 rounded-full flex items-center justify-center text-white overflow-hidden border-2 border-gold shadow-lg">
+                        <i id="userIcon" class="fa-solid fa-user text-xs"></i>
+                        <img id="userPhoto" class="user-photo-display hidden h-full w-full object-cover">
                     </div>
-                    <input type="file" id="profileUpload" class="hidden" accept="image/*">
+                    <div class="absolute -bottom-1 -right-1 bg-gold text-white text-[8px] p-1 rounded-full border border-white">
+                        <i class="fa-solid fa-camera"></i>
+                    </div>
                 </div>
+                <input type="file" id="profileUpload" class="hidden" accept="image/*">
             </div>
         </header>
+        
+        <!-- Le reste de ton contenu (Actions, Tableaux) reste identique -->
 
         <!-- ACTIONS -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">

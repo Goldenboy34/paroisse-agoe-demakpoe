@@ -1,155 +1,96 @@
-// ============================================================
-// 1. CONFIGURATION SUPABASE
-// ============================================================
+// 1. CONFIGURATION
 const supabaseUrl = 'https://mkufkdtreeqcycnjtcxe.supabase.co'; 
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rdWZrZHRyZWVxY3ljbmp0Y3hlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NTA0MjUsImV4cCI6MjA4NzQyNjQyNX0.XG3G_aRQ_NKAu9gxgvWNpKiRCIAX83cps8Jou8S4ne0'; 
 const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-// --- FONCTIONS NAVIGATION ---
-function logout() { 
-    _supabase.auth.signOut().then(() => { window.location.href = "index.html"; }); 
+// 2. NAVIGATION & UI
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    if (sidebar && overlay) {
+        sidebar.classList.toggle('-translate-x-full');
+        overlay.classList.toggle('hidden');
+    }
 }
 
-// ============================================================
-// 2. SYNCHRONISATION DE L'ÉTAT DE CONNEXION (GLOBAL)
-// ============================================================
-async function synchroniserUtilisateur() {
+function openModal(id) { document.getElementById(id)?.classList.remove('hidden'); }
+function closeModal(id) { document.getElementById(id)?.classList.add('hidden'); }
+function logout() { _supabase.auth.signOut().then(() => { window.location.href = "index.html"; }); }
+
+// 3. SYNCHRONISATION DU PROFIL (Sur toutes les pages)
+async function syncProfil() {
     const { data: { user } } = await _supabase.auth.getUser();
-    const authSection = document.getElementById('navAuthSection');
-
-    if (user && authSection) {
-        // 1. Récupérer les infos du profil (nom + photo)
-        const { data: profile } = await _supabase.from('profiles').select('full_name, avatar_url').eq('id', user.id).maybeSingle();
-        const userName = profile?.full_name || user.email.split('@')[0];
-        const userPhoto = profile?.avatar_url || null;
-
-        // 2. Mettre à jour la barre de navigation (Accueil & Global)
-        authSection.innerHTML = `
-            <div class="flex items-center gap-3 bg-white/50 backdrop-blur-md p-2 pr-4 rounded-full border border-gold/20 shadow-sm cursor-pointer" onclick="window.location.href='dashboard.html'">
-                <div class="h-10 w-10 bg-slate-900 rounded-full flex items-center justify-center text-white overflow-hidden border-2 border-gold">
-                    ${userPhoto ? `<img src="${userPhoto}" class="h-full w-full object-cover">` : `<i class="fa-solid fa-user text-xs"></i>`}
-                </div>
-                <div class="hidden md:block text-left">
-                    <p class="text-[8px] font-black text-gold uppercase leading-none">Bienvenue,</p>
-                    <p class="text-[11px] font-black text-slate-900 leading-tight">${userName.toUpperCase()}</p>
-                </div>
-            </div>
-        `;
-
-        // 3. Si on est sur le Dashboard, remplir aussi les éléments spécifiques
-        const dashName = document.getElementById('userNameText');
-        if (dashName) dashName.innerText = userName.toUpperCase();
-        
-        const dashPhoto = document.getElementById('userPhoto');
-        const dashIcon = document.getElementById('userIcon');
-        if (userPhoto && dashPhoto) {
-            dashPhoto.src = userPhoto;
-            dashPhoto.classList.remove('hidden');
-            if (dashIcon) dashIcon.classList.add('hidden');
-        }
-    }
-}
-
-// ============================================================
-// 3. COMPTEUR (PAGE D'ACCUEIL)
-// ============================================================
-function initCompteur() {
-    const daysEl = document.getElementById('days');
-    if (!daysEl) return;
-
-    function update() {
-        const now = new Date();
-        let target = new Date();
-        const dayIdx = now.getDay();
-        const daysToSun = (dayIdx === 0 && now.getHours() < 7) ? 0 : (7 - dayIdx);
-        target.setDate(now.getDate() + daysToSun);
-        target.setHours(6, 30, 0, 0);
-
-        const diff = target - now;
-        if (diff <= 0) return;
-
-        document.getElementById('days').innerText = Math.floor(diff / 86400000).toString().padStart(2, '0');
-        document.getElementById('hours').innerText = Math.floor((diff % 86400000) / 3600000).toString().padStart(2, '0');
-        document.getElementById('minutes').innerText = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
-        document.getElementById('seconds').innerText = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
-        document.getElementById('nomMesse').innerText = "Prochaine Messe Dominicale";
-    }
-    setInterval(update, 1000);
-    update();
-}
-
-// ============================================================
-// 4. AUTHENTIFICATION (Connexion / Inscription)
-// ============================================================
-function initAuth() {
-    const authForm = document.getElementById('authForm');
-    if (!authForm) return;
-
-    let isLogin = true;
-    const toggleBtn = document.getElementById('toggleAuth');
     
-    if (toggleBtn) {
-        toggleBtn.onclick = (e) => {
-            e.preventDefault();
-            isLogin = !isLogin;
-            document.getElementById('authTitle').innerText = isLogin ? "Connexion" : "Inscription";
-            document.getElementById('usernameField').classList.toggle('hidden', isLogin);
-            document.getElementById('authBtn').querySelector('span').innerText = isLogin ? "Se Connecter" : "Créer un compte";
-        };
-    }
+    // Si on est sur l'accueil, on gère la Nav dynamique
+    const navAuth = document.getElementById('navAuthSection');
+    
+    if (user) {
+        const { data: profile } = await _supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
+        const name = (profile?.full_name || user.email.split('@')[0]).toUpperCase();
+        const photo = profile?.avatar_url;
 
-    authForm.onsubmit = async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('identifier').value;
-        const password = document.getElementById('password').value;
-        const fullName = document.getElementById('username')?.value;
-
-        if (isLogin) {
-            const { error } = await _supabase.auth.signInWithPassword({ email, password });
-            if (error) alert(error.message); else window.location.href = "dashboard.html";
-        } else {
-            const { data, error } = await _supabase.auth.signUp({ email, password, options: { data: { full_name: fullName } } });
-            if (error) alert(error.message); else {
-                await _supabase.from('profiles').insert([{ id: data.user.id, full_name: fullName, email, statut: 'ACTIF' }]);
-                alert("Compte créé !"); location.reload();
-            }
+        // Mise à jour de tous les éléments "Nom" et "Photo" présents sur la page
+        document.querySelectorAll('.user-name-display').forEach(el => el.innerText = name);
+        if (photo) {
+            document.querySelectorAll('.user-photo-display').forEach(img => {
+                img.src = photo;
+                img.classList.remove('hidden');
+            });
+            document.querySelectorAll('#userIcon').forEach(icon => icon.classList.add('hidden'));
         }
-    };
+
+        // Si on est sur l'accueil (index.html), on remplace le bouton par le profil
+        if (navAuth) {
+            navAuth.innerHTML = `
+                <div class="flex items-center gap-3 bg-white/80 p-2 pr-4 rounded-full border border-gold/20 shadow-sm cursor-pointer" onclick="window.location.href='dashboard.html'">
+                    <div class="h-10 w-10 bg-slate-900 rounded-full flex items-center justify-center text-white overflow-hidden border-2 border-gold">
+                        ${photo ? `<img src="${photo}" class="h-full w-full object-cover">` : `<i class="fa-solid fa-user text-xs"></i>`}
+                    </div>
+                    <div class="hidden sm:block text-left">
+                        <p class="text-[7px] font-black text-gold uppercase leading-none">Connecté</p>
+                        <p class="text-[10px] font-black text-slate-900">${name}</p>
+                    </div>
+                </div>
+            `;
+        }
+    }
 }
 
-// ============================================================
-// 5. GESTION PHOTO DE PROFIL (DASHBOARD)
-// ============================================================
+// 4. GESTION UPLOAD PHOTO
 async function initPhotoUpload() {
-    const uploadInput = document.getElementById('profileUpload');
-    if (!uploadInput) return;
+    const input = document.getElementById('profileUpload');
+    if (!input) return;
 
-    const { data: { user } } = await _supabase.auth.getUser();
-
-    uploadInput.onchange = async (e) => {
+    input.onchange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+
+        const { data: { user } } = await _supabase.auth.getUser();
         const fileName = `${user.id}-${Date.now()}`;
-        
-        await _supabase.storage.from('avatars').upload(fileName, file);
+
+        // 1. Upload
+        const { error: upErr } = await _supabase.storage.from('avatars').upload(fileName, file);
+        if (upErr) return alert("Erreur upload");
+
+        // 2. URL
         const { data: { publicUrl } } = _supabase.storage.from('avatars').getPublicUrl(fileName);
+
+        // 3. SQL
         await _supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', user.id);
         
         location.reload();
     };
 }
 
-// ============================================================
-// 6. INITIALISATION TOUT-EN-UN
-// ============================================================
+// 5. INITIALISATION
 document.addEventListener('DOMContentLoaded', () => {
-    // Vérifie la connexion sur toutes les pages pour mettre à jour la Nav
-    synchroniserUtilisateur();
-    
-    // Fonctions spécifiques selon la page
-    initAuth();
-    initCompteur();
+    syncProfil();
     initPhotoUpload();
-
-    // Si on est sur le dashboard, on peut aussi charger l'historique ici...
+    
+    // Autres fonctions (Auth, Compteur, Historique)
+    if (document.getElementById('authForm')) initAuth();
+    if (document.getElementById('days')) lancerCompteur();
+    if (document.getElementById('historiqueMesseTable')) chargerHistorique(); 
 });
+
+// Inclure ici tes autres fonctions existantes : initAuth(), lancerCompteur(), etc.
