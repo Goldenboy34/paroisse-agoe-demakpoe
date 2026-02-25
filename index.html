@@ -12,16 +12,21 @@
 <body class="reveal">
     <img src="gr.jpg" class="marie-bg" alt="Vierge Marie">
 
-    <!-- NAV -->
+    
+    <!-- NAV DYNAMIQUE -->
     <nav class="p-6 flex justify-between items-center max-w-7xl mx-auto relative z-[100]">
         <div class="flex items-center gap-4">
-            <img src="logo-paroisse.jpeg.jpeg" class="h-14 w-14 rounded-full border-2 border-gold shadow-2xl pulse-gold">
+            <img src="logo-paroisse.jpeg.jpeg" class="h-14 w-14 rounded-full border-2 border-gold shadow-2xl pulse-gold object-cover">
             <div>
                 <h1 class="font-black text-xl tracking-tighter text-slate-900 leading-none uppercase">Archidiocèse de Lomé</h1>
-                <p class="text-[8px] font-bold uppercase tracking-[0.1em] text-gold">Paroisse Notre Dame de l'Assomption d'Agoè Demakpoè</p>
+                <p class="text-[8px] font-bold uppercase tracking-[0.1em] text-gold">Paroisse NDA d'Agoè Demakpoè</p>
             </div>
         </div>
-        <a href="auth.html" class="btn-gold shadow-lg text-center">Espace Fidèle</a>
+
+        <!-- Cette section change selon la connexion -->
+        <div id="navAuthSection" class="flex items-center gap-4">
+            <a href="auth.html" class="btn-gold shadow-lg text-center">Espace Fidèle</a>
+        </div>
     </nav>
 
     <!-- HERO : COMPTEUR AU CENTRE -->
